@@ -19,7 +19,11 @@
     from grad_room_type
     where room_type_id = #{roomTypeId,jdbcType=INTEGER}
   </select>
-  
+  <select id="getAllRoomType" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from grad_room_type
+  </select>
   <select id="selectByPage" parameterType="com.zhou.grad.auth.model.QueryParamsModal" resultMap="BaseResultMap">
     select * from grad_room_type 
     <where>

@@ -21,16 +21,24 @@ public class RoomServiceImpl implements RoomService{
 	SimpleDateFormat df = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
     @Autowired
     private RoomDao roomDao;
+    @Autowired
+    private RoomTypeDao roomTypeDao;
 
 	@Override
-	public void saveRoom(Room room) {
+	public Map<String, Object> saveRoom(Room room) {
+		 Map<String, Object>  map=new HashMap<>();
 		try {
 			room.setCreatedTime(new Date());
 			roomDao.insert(room);
+			map.put("message", "success");
+			map.put("value", "1");
+			
 		} catch (Exception e) {
 			e.printStackTrace();
+			map.put("message", "fail");
+			map.put("value", "-1");
 		}
-		
+		return map;
 	}
 	
 	@Override
@@ -56,6 +64,9 @@ public class RoomServiceImpl implements RoomService{
         
         
         List<Room> list = roomDao.selectByPage(paramsMap);
+        for (Room room : list) {
+			room.setRoomType(roomTypeDao.selectByPrimaryKey(room.getRoomTypeId()).getRoomTypeName());
+		}
         int total = roomDao.countAllRoom(paramsMap);
         returnMap.put("rows", list);
         returnMap.put("total", total);
@@ -87,6 +98,5 @@ public class RoomServiceImpl implements RoomService{
 		
 	}
 
-	
-    
+
 }

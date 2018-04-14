@@ -1,5 +1,6 @@
 package com.zhou.grad.business.service.impl;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -96,4 +97,16 @@ public class RoomTypeServiceImpl implements RoomTypeService{
         RoomType roomType=roomTypeDao.selectByPrimaryKey(id);
         return roomType;
     }
+    
+	@Override
+	public List<RoomType> getAllRoomType() {
+		List<RoomType> roomTypes=new ArrayList<>();
+		try {
+			roomTypes=roomTypeDao.getAllRoomType();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return roomTypes;
+	}
+    
 }

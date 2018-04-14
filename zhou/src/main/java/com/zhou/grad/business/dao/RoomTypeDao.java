@@ -44,4 +44,6 @@ public interface RoomTypeDao {
     int updateByPrimaryKey(RoomType record);
     
     int deleteTypeByIds(Integer [] ids);
+
+	List<RoomType> getAllRoomType();
 }

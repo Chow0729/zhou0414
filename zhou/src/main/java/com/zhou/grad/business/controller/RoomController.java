@@ -1,5 +1,8 @@
 package com.zhou.grad.business.controller;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -9,10 +12,13 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
 
 import com.zhou.grad.auth.model.QueryParamsModal;
 import com.zhou.grad.business.service.RoomService;
+import com.zhou.grad.business.service.RoomTypeService;
 import com.zhou.grad.entity.Room;
+import com.zhou.grad.entity.RoomType;
 
 @Controller
 @RequestMapping("room")
@@ -21,23 +27,40 @@ public class RoomController {
 
     @Autowired
     private RoomService roomService;
+    @Autowired
+    private RoomTypeService roomTypeService;
+    
+//    @RequestMapping("toRoomManage")
+//    public String toRoomManage() {
+//        return "business/room_manage";
+//    }
     
     @RequestMapping("toRoomManage")
-    public String toRoomManage() {
-        return "business/room_manage";
+    public ModelAndView getAllRoomType(){
+    	ModelAndView mv=new ModelAndView("/business/room_manage");
+    	List<RoomType> roomTypes=new ArrayList<>();
+    	try {
+    		roomTypes= roomTypeService.getAllRoomType();
+    		if(roomTypes!=null&&roomTypes.size()>0){
+    			mv.addObject("roomTypes", roomTypes);
+    		}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return mv;
+    	
     }
     
-    
-    
     @RequestMapping("saveRoom")
-    public void saveRoom(Room room) {
+    public  Map<String, Object>  saveRoom(Room room) {
+    	 Map<String, Object>  map=new HashMap<>();
     	try {
-    		roomService.saveRoom(room);
+    		map=roomService.saveRoom(room);
 		} catch (Exception e) {
 			e.printStackTrace();
 			log.error("【RoomController.saveRoom()】 ERROR：" + "\n【参数值】：", e);
 		}
-    	
+    	return map;
     }
     
     @ResponseBody

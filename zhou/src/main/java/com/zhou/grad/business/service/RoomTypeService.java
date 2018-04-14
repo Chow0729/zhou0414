@@ -1,5 +1,6 @@
 package com.zhou.grad.business.service;
 
+import java.util.List;
 import java.util.Map;
 
 import com.zhou.grad.auth.model.QueryParamsModal;
@@ -42,5 +43,8 @@ public interface RoomTypeService {
      */
     RoomType geRoomTypeById(int id);
     
-    
+	 /**
+     * 获取所有的房间类型
+     */
+    List<RoomType> getAllRoomType();
 }

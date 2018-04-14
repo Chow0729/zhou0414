@@ -102,32 +102,15 @@
                                             </div>
                                           </div>
                                     </div>
-                                   <!--  <div class="row">
-                                        <div class="col-sm-6 form-group">
-                                            <label class="col-sm-4 control-label" for="txt_roomNum">房间数量</label>
-                                            <div class="col-sm-8">
-                                                <input class="form-control"
-                                                    id="txt_roomNum" name="roomNum" type="number"
-                                                    placeholder="请输入房间数量" />
-                                            </div>
-                                        </div>
-                                        <div class="col-sm-6 form-group">
-                                            <label class="col-sm-4 control-label" for="txt_bedsNum">床位数量</label>
-                                            <div class="col-sm-8">
-													<input class="form-control" id="txt_bedsNum"
-														name="bedsNum" type="number" placeholder="请输入床位数量" />
-												</div>
-                                        </div>
-                                    </div> -->
                                     <div class="row">
                                     	<div class="col-sm-6 form-group">
                                             <label class="col-sm-4 control-label" for="txt_roomType">房间类型</label>
                                             <div class="col-sm-8">
-													<select class="form-control" id="txt_roomType" name="status"> 
-													    <!-- <option value="-1">请选择</option>
-													    <option value="1">有房</option>
-													    <option value="0">无房</option>
-													    <option value="2">紧张</option> -->
+													<select class="form-control" id="txt_roomType" name="roomTypeId"> 
+														<option value="">请选择</option>
+									                   	<c:forEach items="${requestScope.roomTypes }" var="types">
+									                         <option value="${types.roomTypeId}">${types.roomTypeName}</option>
+									                   	</c:forEach>
 													</select>
 												</div>
                                         </div>
@@ -309,7 +292,57 @@
         </form>
     </div>
        <!--  添加房间类型模态框 结束 -->
-        
+    <div class="modal fade" id="customer_modal" tabindex="-1" role="dialog"
+        aria-labelledby="myModalLabel_customer" aria-hidden="true">
+        <form class="form-horizontal" id="customerInfoForm">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal"
+                            aria-hidden="true">&times;</button>
+                        <h4 class="modal-title" id="myModalLabel_customer">添加客户信息</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="panel-body" style="padding-bottom: 0px;">
+                            <div class="panel panel-default">
+                                <div class="panel-heading">请填写客户信息</div>
+                                <div class="panel-body">
+                                    <div class="row">
+                                        <div class="col-sm-12 form-group">
+                                            <label class="col-sm-2 control-label" for="txt_customerName">姓名</label>
+                                            <div class="col-sm-10" style="padding-right: 45px;padding-left: 10px;">
+                                                <input class="form-control"
+                                                    id="txt_customerName" name="customerName" type="text"
+                                                    placeholder="请输入客户姓名" />
+                                            </div>
+                                          </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-sm-12 form-group">
+                                            <label class="col-sm-2 control-label" for="txt_customerCardNum">证件号</label>
+                                            <div class="col-sm-10" style="padding-right: 45px;padding-left: 10px;">
+                                                <input class="form-control"
+                                                    id="txt_customerCardNum" name="cardNum" type="text"
+                                                    placeholder="请输入客户证件号" />
+                                            </div>
+                                          </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">
+                            <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>关闭
+                        </button>
+                        <button type="button" class="btn btn-primary" id="btn_confirm_customer" >
+                            <span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span>确认
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
 		<script type="text/javascript" src="js/business/room_manage.js"></script>
 		<script type="text/javascript" src="js/business/room_type_manage.js"></script>
 		<!-- <script type="text/javascript" src="js/auth/plugins/component.js"></script> -->

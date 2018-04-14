@@ -25,13 +25,13 @@
     where room_id = #{roomId,jdbcType=INTEGER}
   </delete>
   <insert id="insert" parameterType="com.zhou.grad.entity.Room">
-    <selectKey keyProperty="roomId" order="BEFORE" resultType="java.lang.Integer">
+    <!-- <selectKey keyProperty="roomId" order="BEFORE" resultType="java.lang.Integer">
       SELECT LAST_INSERT_ID()
-    </selectKey>
-    insert into grad_room (room_id, room_name, status, 
+    </selectKey> -->
+    insert into grad_room ( room_name, status, 
       room_type, room_type_id, remark, 
       created_time, edit_time)
-    values (#{roomId,jdbcType=INTEGER}, #{roomName,jdbcType=VARCHAR}, #{status,jdbcType=VARCHAR}, 
+    values ( #{roomName,jdbcType=VARCHAR}, #{status,jdbcType=VARCHAR}, 
       #{roomType,jdbcType=VARCHAR}, #{roomTypeId,jdbcType=INTEGER}, #{remark,jdbcType=VARCHAR}, 
       #{createdTime,jdbcType=TIMESTAMP}, #{editTime,jdbcType=TIMESTAMP})
   </insert>
@@ -91,7 +91,7 @@
   </insert>
   
     <select id="selectByPage" parameterType="com.zhou.grad.auth.model.QueryParamsModal" resultMap="BaseResultMap">
-    select * from grad_room 
+    select * from grad_room
     <where>
       <if test="condition != null and condition != ''">
         IFNULL(${selectedFiled},CONCAT(IFNULL(room_name,''),IFNULL(remark,'')))

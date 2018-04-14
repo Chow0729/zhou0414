@@ -7,7 +7,14 @@ $(function() {
 	var oButton1 = new ButtonInit1();
 	oButton1.Init();
 });
-
+function getRootPath() {
+	var strFullPath = window.document.location.href;
+	var strPath = window.document.location.pathname;
+	var pos = strFullPath.indexOf(strPath);
+	var prePath = strFullPath.substring(0, pos);
+	var postPath = strPath.substring(0, strPath.substr(1).indexOf('/') + 1) + "/";
+	return(prePath + postPath);
+}
 // 表格
 var TableInit1 = function() {
 	var oTableInit1 = new Object();
@@ -77,10 +84,13 @@ var TableInit1 = function() {
 										align : 'center'
 									},*/
 									{
-										field : 'roleId',
+										field : '',
 										title : '操作',
-										align : 'center'/*,
-										formatter :showDetail*/
+										align : 'center',
+										formatter :function(value,row){
+											return ['<button onclick="checkIn('+row.roomId+')">' +"订房" + '</button>',
+												'<button onclick="checkOut('+row.roomId+')" >' +"退房" + '</button>'].join('')
+										}
 									}]
 						});
 	};
@@ -133,19 +143,20 @@ var ButtonInit1 = function() {
 
 //添加房间
 function doAddroom(){
-	alert("hahahha");
 	$.ajax({
 		url:"./room/saveRoom",
 		data:$("#roomInfoForm").serialize(),
     	type:"post",
     	dataType : 'JSON',
-		success : function(map) {
-            if (map.result>0) {
-            	toastr.success(map.message);
+		success : function(data) {
+            if (data.message=="success") {
+            	alert(1)
+            	toastr.success("新增成功");
             	$('#roomTable').bootstrapTable("refresh"); // 添加成功之后刷新表格
             	$('#room_modal').modal('hide'); // 隐藏模态框
+            	alert(2)
             } else {
-            	toastr.error(map.message);
+            	toastr.error("新增失败");
             	$('#room_modal').modal('hide');
             }
 		}
@@ -173,5 +184,44 @@ function doDeleteroom(){
             	$('#room_modal').modal('hide');
             }
 		}
+    });
+}
+
+/**
+ * 订房
+ * @param roomId
+ * @returns
+ */
+function checkIn(roomId){
+	$("#customer_modal").modal('show');
+	$("#btn_confirm_customer").click(function(){
+		var customerName=$("#txt_customerName").val()
+		var cardNum=$("#txt_customerCardNum").val()
+		$.ajax({
+	    	url: getRootPath() + "customer/saveCutomer",
+	    	type: "post",
+	    	dataType: "json",
+	    	data: {"customerName": customerName,"cardNum": cardNum,"roomId": roomId},
+	    	success: function(data){
+	    		console.log(data);
+	    	}
+	    });
+	})
+	
+}
+/**
+ * 退房
+ * @param roomId
+ * @returns
+ */
+function checkOut(roomId){
+	$.ajax({
+    	url: getRootPath() + "customerRoom/deleteCustomerRoom",
+    	type: "post",
+    	dataType: "json",
+    	data: {"roomId": roomId},
+    	success: function(data){
+    		console.log(data);
+    	}
     });
 }
