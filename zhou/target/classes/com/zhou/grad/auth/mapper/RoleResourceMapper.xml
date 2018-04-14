@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zhou.grad.auth.dao.RoleResourceDao">
+  <resultMap id="BaseResultMap" type="com.zhou.grad.entity.RoleResource">
+    <id column="role_resource_id" jdbcType="INTEGER" property="roleResourceId" />
+    <result column="role_id" jdbcType="INTEGER" property="roleId" />
+    <result column="resource_id" jdbcType="INTEGER" property="resourceId" />
+    <result column="created_time" jdbcType="TIMESTAMP" property="createdTime" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    role_resource_id, role_id, resource_id, created_time
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from grad_role_resource
+    where role_resource_id = #{roleResourceId,jdbcType=INTEGER}
+  </select>
+  <select id="selectRoleResourceByRoleId" parameterType="int" resultMap="BaseResultMap">
+    select * from grad_role_resource where role_id=#{roleId}
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from grad_role_resource
+    where role_resource_id = #{roleResourceId,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByRoleId" parameterType="java.lang.Integer">
+    delete from grad_role_resource
+    where role_id = #{roleId}
+  </delete>
+  
+  <delete id="deleteByResourceId" parameterType="java.lang.Integer">
+    delete from grad_role_resource
+    where resource_id = #{resourceId}
+  </delete>
+  <insert id="insert" parameterType="com.zhou.grad.entity.RoleResource">
+    <selectKey keyProperty="roleResourceId" order="BEFORE" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into grad_role_resource (role_resource_id, role_id, resource_id, 
+      created_time)
+    values (#{roleResourceId,jdbcType=INTEGER}, #{roleId,jdbcType=INTEGER}, #{resourceId,jdbcType=INTEGER}, 
+      #{createdTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.zhou.grad.entity.RoleResource">
+    <selectKey keyProperty="roleResourceId" order="BEFORE" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into grad_role_resource
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      role_resource_id,
+      <if test="roleId != null">
+        role_id,
+      </if>
+      <if test="resourceId != null">
+        resource_id,
+      </if>
+      <if test="createdTime != null">
+        created_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      #{roleResourceId,jdbcType=INTEGER},
+      <if test="roleId != null">
+        #{roleId,jdbcType=INTEGER},
+      </if>
+      <if test="resourceId != null">
+        #{resourceId,jdbcType=INTEGER},
+      </if>
+      <if test="createdTime != null">
+        #{createdTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <insert id="insertBatch" parameterType="map">
+    insert into grad_role_resource (resource_id,role_id,created_time) values
+    <foreach collection="resourceIds" item="id" separator=",">
+      (#{id}, #{roleId}, #{createdTime})
+    </foreach>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.zhou.grad.entity.RoleResource">
+    update grad_role_resource
+    <set>
+      <if test="roleId != null">
+        role_id = #{roleId,jdbcType=INTEGER},
+      </if>
+      <if test="resourceId != null">
+        resource_id = #{resourceId,jdbcType=INTEGER},
+      </if>
+      <if test="createdTime != null">
+        created_time = #{createdTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where role_resource_id = #{roleResourceId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.zhou.grad.entity.RoleResource">
+    update grad_role_resource
+    set role_id = #{roleId,jdbcType=INTEGER},
+      resource_id = #{resourceId,jdbcType=INTEGER},
+      created_time = #{createdTime,jdbcType=TIMESTAMP}
+    where role_resource_id = #{roleResourceId,jdbcType=INTEGER}
+  </update>
+</mapper>

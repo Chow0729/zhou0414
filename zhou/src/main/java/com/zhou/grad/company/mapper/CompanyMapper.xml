@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zhou.grad.company.dao.CompanyDao">
+  <resultMap id="BaseResultMap" type="com.zhou.grad.entity.Company">
+    <id column="company_id" jdbcType="INTEGER" property="companyId" />
+    <result column="company_name" jdbcType="VARCHAR" property="companyName" />
+    <result column="company_eng" jdbcType="VARCHAR" property="companyEng" />
+    <result column="tax_no" jdbcType="VARCHAR" property="taxNo" />
+    <result column="reg_addr" jdbcType="VARCHAR" property="regAddr" />
+    <result column="tel" jdbcType="VARCHAR" property="tel" />
+    <result column="bank_name" jdbcType="VARCHAR" property="bankName" />
+    <result column="bank_account" jdbcType="VARCHAR" property="bankAccount" />
+    <result column="owner" jdbcType="VARCHAR" property="owner" />
+    <result column="addr" jdbcType="VARCHAR" property="addr" />
+    <result column="logo" jdbcType="VARCHAR" property="logo" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="edit_time" jdbcType="TIMESTAMP" property="editTime" />
+    <result column="created_time" jdbcType="TIMESTAMP" property="createdTime" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    company_id, company_name, company_eng, tax_no, reg_addr, tel, bank_name, bank_account, 
+    owner, addr, logo, remark, edit_time, created_time
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from grad_company
+    where company_id = #{companyId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from grad_company
+    where company_id = #{companyId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.zhou.grad.entity.Company">
+    <selectKey keyProperty="companyId" order="BEFORE" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into grad_company (company_id, company_name, company_eng, 
+      tax_no, reg_addr, tel, 
+      bank_name, bank_account, owner, 
+      addr, logo, remark, 
+      edit_time, created_time)
+    values (#{companyId,jdbcType=INTEGER}, #{companyName,jdbcType=VARCHAR}, #{companyEng,jdbcType=VARCHAR}, 
+      #{taxNo,jdbcType=VARCHAR}, #{regAddr,jdbcType=VARCHAR}, #{tel,jdbcType=VARCHAR}, 
+      #{bankName,jdbcType=VARCHAR}, #{bankAccount,jdbcType=VARCHAR}, #{owner,jdbcType=VARCHAR}, 
+      #{addr,jdbcType=VARCHAR}, #{logo,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR}, 
+      #{editTime,jdbcType=TIMESTAMP}, #{createdTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.zhou.grad.entity.Company">
+    <selectKey keyProperty="companyId" order="BEFORE" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into grad_company
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      company_id,
+      <if test="companyName != null">
+        company_name,
+      </if>
+      <if test="companyEng != null">
+        company_eng,
+      </if>
+      <if test="taxNo != null">
+        tax_no,
+      </if>
+      <if test="regAddr != null">
+        reg_addr,
+      </if>
+      <if test="tel != null">
+        tel,
+      </if>
+      <if test="bankName != null">
+        bank_name,
+      </if>
+      <if test="bankAccount != null">
+        bank_account,
+      </if>
+      <if test="owner != null">
+        owner,
+      </if>
+      <if test="addr != null">
+        addr,
+      </if>
+      <if test="logo != null">
+        logo,
+      </if>
+      <if test="remark != null">
+        remark,
+      </if>
+      <if test="editTime != null">
+        edit_time,
+      </if>
+      <if test="createdTime != null">
+        created_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      #{companyId,jdbcType=INTEGER},
+      <if test="companyName != null">
+        #{companyName,jdbcType=VARCHAR},
+      </if>
+      <if test="companyEng != null">
+        #{companyEng,jdbcType=VARCHAR},
+      </if>
+      <if test="taxNo != null">
+        #{taxNo,jdbcType=VARCHAR},
+      </if>
+      <if test="regAddr != null">
+        #{regAddr,jdbcType=VARCHAR},
+      </if>
+      <if test="tel != null">
+        #{tel,jdbcType=VARCHAR},
+      </if>
+      <if test="bankName != null">
+        #{bankName,jdbcType=VARCHAR},
+      </if>
+      <if test="bankAccount != null">
+        #{bankAccount,jdbcType=VARCHAR},
+      </if>
+      <if test="owner != null">
+        #{owner,jdbcType=VARCHAR},
+      </if>
+      <if test="addr != null">
+        #{addr,jdbcType=VARCHAR},
+      </if>
+      <if test="logo != null">
+        #{logo,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null">
+        #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="editTime != null">
+        #{editTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createdTime != null">
+        #{createdTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.zhou.grad.entity.Company">
+    update grad_company
+    <set>
+      <if test="companyName != null">
+        company_name = #{companyName,jdbcType=VARCHAR},
+      </if>
+      <if test="companyEng != null">
+        company_eng = #{companyEng,jdbcType=VARCHAR},
+      </if>
+      <if test="taxNo != null">
+        tax_no = #{taxNo,jdbcType=VARCHAR},
+      </if>
+      <if test="regAddr != null">
+        reg_addr = #{regAddr,jdbcType=VARCHAR},
+      </if>
+      <if test="tel != null">
+        tel = #{tel,jdbcType=VARCHAR},
+      </if>
+      <if test="bankName != null">
+        bank_name = #{bankName,jdbcType=VARCHAR},
+      </if>
+      <if test="bankAccount != null">
+        bank_account = #{bankAccount,jdbcType=VARCHAR},
+      </if>
+      <if test="owner != null">
+        owner = #{owner,jdbcType=VARCHAR},
+      </if>
+      <if test="addr != null">
+        addr = #{addr,jdbcType=VARCHAR},
+      </if>
+      <if test="logo != null">
+        logo = #{logo,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null">
+        remark = #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="editTime != null">
+        edit_time = #{editTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createdTime != null">
+        created_time = #{createdTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where company_id = #{companyId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.zhou.grad.entity.Company">
+    update grad_company
+    set company_name = #{companyName,jdbcType=VARCHAR},
+      company_eng = #{companyEng,jdbcType=VARCHAR},
+      tax_no = #{taxNo,jdbcType=VARCHAR},
+      reg_addr = #{regAddr,jdbcType=VARCHAR},
+      tel = #{tel,jdbcType=VARCHAR},
+      bank_name = #{bankName,jdbcType=VARCHAR},
+      bank_account = #{bankAccount,jdbcType=VARCHAR},
+      owner = #{owner,jdbcType=VARCHAR},
+      addr = #{addr,jdbcType=VARCHAR},
+      logo = #{logo,jdbcType=VARCHAR},
+      remark = #{remark,jdbcType=VARCHAR},
+      edit_time = #{editTime,jdbcType=TIMESTAMP},
+      created_time = #{createdTime,jdbcType=TIMESTAMP}
+    where company_id = #{companyId,jdbcType=INTEGER}
+  </update>
+</mapper>

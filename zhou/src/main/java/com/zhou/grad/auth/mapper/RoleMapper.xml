@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zhou.grad.auth.dao.RoleDao">
+  <resultMap id="BaseResultMap" type="com.zhou.grad.entity.Role">
+    <id column="role_id" jdbcType="INTEGER" property="roleId" />
+    <result column="role_name" jdbcType="VARCHAR" property="roleName" />
+    <result column="role_code" jdbcType="VARCHAR" property="roleCode" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="isenable" jdbcType="VARCHAR" property="isenable" />
+    <result column="edit_time" jdbcType="TIMESTAMP" property="editTime" />
+    <result column="created_time" jdbcType="TIMESTAMP" property="createdTime" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    role_id, role_name, role_code, remark, isenable, edit_time, created_time
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from grad_role
+    where role_id = #{roleId,jdbcType=INTEGER}
+  </select>
+  <select id="selectRolesByPage" parameterType="java.util.Map" resultMap="BaseResultMap">
+    select
+        <if test="distinct">
+            distinct
+        </if>
+        <include refid="Base_Column_List" />
+        from grad_role
+        <where>
+            <if test="condition != null and condition !=''">
+                IFNULL(${selectedFiled},CONCAT(IFNULL(role_name,''),IFNULL(role_code,''),IFNULL(remark,'')))
+                LIKE CONCAT('%',#{condition},'%')
+            </if>
+        </where>
+        limit #{start},#{pageSize}
+  </select>
+  
+  <select id="selectByRoleCode" resultMap="BaseResultMap" parameterType="java.lang.String">
+    select * from grad_role where role_code=#{roleCode}
+  </select>
+  
+  <select id="countByCondition" parameterType="java.util.Map"
+	resultType="int">
+	select count(*) from grad_role
+	<where>
+		<if test="condition != null and condition !=''">
+			IFNULL(${selectedFiled},CONCAT(IFNULL(role_name,''),IFNULL(role_code,''),IFNULL(remark,'')))
+			LIKE CONCAT('%',#{condition},'%')
+		</if>
+	</where>
+  </select>
+  <select id="selectAllRoles" resultMap="BaseResultMap">
+    select * from grad_role
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from grad_role
+    where role_id = #{roleId,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteRoleBatch" parameterType="java.lang.Integer">
+    delete from grad_role where role_id in
+    <foreach collection="array" item="id" open="(" separator="," close=")">
+      #{id}
+    </foreach>
+  </delete>
+  <insert id="insert" parameterType="com.zhou.grad.entity.Role">
+    <selectKey keyProperty="roleId" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into grad_role (role_id, role_name, role_code, 
+      remark, isenable, edit_time, 
+      created_time)
+    values (#{roleId,jdbcType=INTEGER}, #{roleName,jdbcType=VARCHAR}, #{roleCode,jdbcType=VARCHAR}, 
+      #{remark,jdbcType=VARCHAR}, #{isenable,jdbcType=VARCHAR}, #{editTime,jdbcType=TIMESTAMP}, 
+      #{createdTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.zhou.grad.entity.Role">
+    <selectKey keyProperty="roleId" order="BEFORE" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into grad_role
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      role_id,
+      <if test="roleName != null">
+        role_name,
+      </if>
+      <if test="roleCode != null">
+        role_code,
+      </if>
+      <if test="remark != null">
+        remark,
+      </if>
+      <if test="isenable != null">
+        isenable,
+      </if>
+      <if test="editTime != null">
+        edit_time,
+      </if>
+      <if test="createdTime != null">
+        created_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      #{roleId,jdbcType=INTEGER},
+      <if test="roleName != null">
+        #{roleName,jdbcType=VARCHAR},
+      </if>
+      <if test="roleCode != null">
+        #{roleCode,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null">
+        #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="isenable != null">
+        #{isenable,jdbcType=VARCHAR},
+      </if>
+      <if test="editTime != null">
+        #{editTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createdTime != null">
+        #{createdTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.zhou.grad.entity.Role">
+    update grad_role
+    <set>
+      <if test="roleName != null">
+        role_name = #{roleName,jdbcType=VARCHAR},
+      </if>
+      <if test="roleCode != null">
+        role_code = #{roleCode,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null">
+        remark = #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="isenable != null">
+        isenable = #{isenable,jdbcType=VARCHAR},
+      </if>
+      <if test="editTime != null">
+        edit_time = #{editTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createdTime != null">
+        created_time = #{createdTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where role_id = #{roleId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.zhou.grad.entity.Role">
+    update grad_role
+    set role_name = #{roleName,jdbcType=VARCHAR},
+      role_code = #{roleCode,jdbcType=VARCHAR},
+      remark = #{remark,jdbcType=VARCHAR},
+      isenable = #{isenable,jdbcType=VARCHAR},
+      edit_time = #{editTime,jdbcType=TIMESTAMP},
+      created_time = #{createdTime,jdbcType=TIMESTAMP}
+    where role_id = #{roleId,jdbcType=INTEGER}
+  </update>
+</mapper>

@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zhou.grad.business.dao.RoomTypeDao">
+  <resultMap id="BaseResultMap" type="com.zhou.grad.entity.RoomType">
+    <id column="room_type_id" jdbcType="INTEGER" property="roomTypeId" />
+    <result column="room_type_name" jdbcType="VARCHAR" property="roomTypeName" />
+    <result column="room_num" jdbcType="INTEGER" property="roomNum" />
+    <result column="beds_num" jdbcType="INTEGER" property="bedsNum" />
+    <result column="room_price" jdbcType="DECIMAL" property="roomPrice" />
+    <result column="status" jdbcType="VARCHAR" property="status" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    room_type_id, room_type_name, room_num, beds_num, room_price, status, remark
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from grad_room_type
+    where room_type_id = #{roomTypeId,jdbcType=INTEGER}
+  </select>
+  
+  <select id="selectByPage" parameterType="com.zhou.grad.auth.model.QueryParamsModal" resultMap="BaseResultMap">
+    select * from grad_room_type 
+    <where>
+      <if test="condition != null and condition != ''">
+        IFNULL(${selectedFiled},CONCAT(IFNULL(room_type_name,''),IFNULL(remark,'')))
+        LIKE CONCAT('%',#{condition},'%')
+      </if>
+      <if test="status >=0">
+        status=#{status}
+      </if>
+    </where>
+    limit #{start},#{pageSize}
+  </select>
+  <select id="countAllRoomType" parameterType="com.zhou.grad.auth.model.QueryParamsModal" resultType="int">
+    select count(*) from grad_room_type 
+    <where>
+      <!-- <if test="condition != null and condition != ''">
+        room_type_name=#{condition}
+      </if>
+      <if test="status != null and status !=''">
+        status=#{status}
+      </if> -->
+      <if test="condition != null and condition != ''">
+        IFNULL(${selectedFiled},CONCAT(IFNULL(room_type_name,''),IFNULL(remark,'')))
+        LIKE CONCAT('%',#{condition},'%')
+      </if>
+      <if test="status >=0">
+        status=#{status}
+      </if>
+    </where>
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from grad_room_type
+    where room_type_id = #{roomTypeId,jdbcType=INTEGER}
+  </delete>
+  <!-- 批量删除房间类型 -->
+  <delete id="deleteTypeByIds" parameterType="java.lang.Integer">
+    delete from grad_room_type  
+    where room_type_id in
+    <foreach item="item" collection="array" open="(" separator="," close=")">
+            #{item}
+    </foreach>
+  </delete>
+  <insert id="insert" parameterType="com.zhou.grad.entity.RoomType">
+    <selectKey keyProperty="roomTypeId" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into grad_room_type (room_type_id, room_type_name, room_num, 
+      beds_num, room_price, status, 
+      remark)
+    values (#{roomTypeId,jdbcType=INTEGER}, #{roomTypeName,jdbcType=VARCHAR}, #{roomNum,jdbcType=INTEGER}, 
+      #{bedsNum,jdbcType=INTEGER}, #{roomPrice,jdbcType=DECIMAL}, #{status,jdbcType=VARCHAR}, 
+      #{remark,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.zhou.grad.entity.RoomType">
+    <selectKey keyProperty="roomTypeId" order="BEFORE" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into grad_room_type
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      room_type_id,
+      <if test="roomTypeName != null">
+        room_type_name,
+      </if>
+      <if test="roomNum != null">
+        room_num,
+      </if>
+      <if test="bedsNum != null">
+        beds_num,
+      </if>
+      <if test="roomPrice != null">
+        room_price,
+      </if>
+      <if test="status != null">
+        status,
+      </if>
+      <if test="remark != null">
+        remark,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      #{roomTypeId,jdbcType=INTEGER},
+      <if test="roomTypeName != null">
+        #{roomTypeName,jdbcType=VARCHAR},
+      </if>
+      <if test="roomNum != null">
+        #{roomNum,jdbcType=INTEGER},
+      </if>
+      <if test="bedsNum != null">
+        #{bedsNum,jdbcType=INTEGER},
+      </if>
+      <if test="roomPrice != null">
+        #{roomPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null">
+        #{remark,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.zhou.grad.entity.RoomType">
+    update grad_room_type
+    <set>
+      <if test="roomTypeName != null">
+        room_type_name = #{roomTypeName,jdbcType=VARCHAR},
+      </if>
+      <if test="roomNum != null">
+        room_num = #{roomNum,jdbcType=INTEGER},
+      </if>
+      <if test="bedsNum != null">
+        beds_num = #{bedsNum,jdbcType=INTEGER},
+      </if>
+      <if test="roomPrice != null">
+        room_price = #{roomPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="status != null">
+        status = #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null">
+        remark = #{remark,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where room_type_id = #{roomTypeId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.zhou.grad.entity.RoomType">
+    update grad_room_type
+    set room_type_name = #{roomTypeName,jdbcType=VARCHAR},
+      room_num = #{roomNum,jdbcType=INTEGER},
+      beds_num = #{bedsNum,jdbcType=INTEGER},
+      room_price = #{roomPrice,jdbcType=DECIMAL},
+      status = #{status,jdbcType=VARCHAR},
+      remark = #{remark,jdbcType=VARCHAR}
+    where room_type_id = #{roomTypeId,jdbcType=INTEGER}
+  </update>
+</mapper>

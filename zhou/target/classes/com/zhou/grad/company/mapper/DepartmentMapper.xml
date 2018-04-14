@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zhou.grad.company.dao.DepartmentDao">
+  <resultMap id="BaseResultMap" type="com.zhou.grad.entity.Department">
+    <id column="dep_id" jdbcType="INTEGER" property="depId" />
+    <result column="parent_id" jdbcType="INTEGER" property="parentId" />
+    <result column="dep_no" jdbcType="VARCHAR" property="depNo" />
+    <result column="dep_name" jdbcType="VARCHAR" property="depName" />
+    <result column="leader" jdbcType="VARCHAR" property="leader" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="edit_time" jdbcType="TIMESTAMP" property="editTime" />
+    <result column="created_time" jdbcType="TIMESTAMP" property="createdTime" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    dep_id, parent_id, dep_no, dep_name, leader, remark, edit_time, created_time
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from grad_department
+    where dep_id = #{depId,jdbcType=INTEGER}
+  </select>
+  
+  <select id="selectAllDepts" resultMap="BaseResultMap">
+      select * from grad_department
+  </select>
+  
+  <select id="selectAllDeptsPage" parameterType="map" resultMap="BaseResultMap">
+    select * from grad_department limit #{offset},#{limit}
+  </select>
+  
+  <select id="countAllDepts" resultType="int">
+    select count(*) from grad_department
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from grad_department
+    where dep_id = #{depId,jdbcType=INTEGER}
+  </delete>
+  
+  <delete id="deleteByIds" parameterType="java.lang.Integer">
+    delete from grad_department
+    where dep_id in 
+    <foreach collection="array" item="id" open="(" separator="," close=")">
+      #{id}
+    </foreach>
+  </delete>
+  <insert id="insert" parameterType="com.zhou.grad.entity.Department">
+    <selectKey keyProperty="depId" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into grad_department (dep_id, parent_id, dep_no, 
+      dep_name, leader, remark, 
+      edit_time, created_time)
+    values (#{depId,jdbcType=INTEGER}, #{parentId,jdbcType=INTEGER}, #{depNo,jdbcType=VARCHAR}, 
+      #{depName,jdbcType=VARCHAR}, #{leader,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR}, 
+      #{editTime,jdbcType=TIMESTAMP}, #{createdTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.zhou.grad.entity.Department">
+    <selectKey keyProperty="depId" order="BEFORE" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into grad_department
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      dep_id,
+      <if test="parentId != null">
+        parent_id,
+      </if>
+      <if test="depNo != null">
+        dep_no,
+      </if>
+      <if test="depName != null">
+        dep_name,
+      </if>
+      <if test="leader != null">
+        leader,
+      </if>
+      <if test="remark != null">
+        remark,
+      </if>
+      <if test="editTime != null">
+        edit_time,
+      </if>
+      <if test="createdTime != null">
+        created_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      #{depId,jdbcType=INTEGER},
+      <if test="parentId != null">
+        #{parentId,jdbcType=INTEGER},
+      </if>
+      <if test="depNo != null">
+        #{depNo,jdbcType=VARCHAR},
+      </if>
+      <if test="depName != null">
+        #{depName,jdbcType=VARCHAR},
+      </if>
+      <if test="leader != null">
+        #{leader,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null">
+        #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="editTime != null">
+        #{editTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createdTime != null">
+        #{createdTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.zhou.grad.entity.Department">
+    update grad_department
+    <set>
+      <if test="parentId != null">
+        parent_id = #{parentId,jdbcType=INTEGER},
+      </if>
+      <if test="depNo != null">
+        dep_no = #{depNo,jdbcType=VARCHAR},
+      </if>
+      <if test="depName != null">
+        dep_name = #{depName,jdbcType=VARCHAR},
+      </if>
+      <if test="leader != null">
+        leader = #{leader,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null">
+        remark = #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="editTime != null">
+        edit_time = #{editTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createdTime != null">
+        created_time = #{createdTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where dep_id = #{depId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.zhou.grad.entity.Department">
+    update grad_department
+    set parent_id = #{parentId,jdbcType=INTEGER},
+      dep_no = #{depNo,jdbcType=VARCHAR},
+      dep_name = #{depName,jdbcType=VARCHAR},
+      leader = #{leader,jdbcType=VARCHAR},
+      remark = #{remark,jdbcType=VARCHAR},
+      edit_time = #{editTime,jdbcType=TIMESTAMP},
+      created_time = #{createdTime,jdbcType=TIMESTAMP}
+    where dep_id = #{depId,jdbcType=INTEGER}
+  </update>
+</mapper>

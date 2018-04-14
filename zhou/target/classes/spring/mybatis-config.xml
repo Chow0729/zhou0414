@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-config.dtd">
+
+<!-- 类似Hibernate配置文件： hibernate.cfg.xml -->
+<configuration>
+    <!-- 是否开启自动驼峰命名规则（camel case）映射 -->
+    <settings>
+        <setting name="mapUnderscoreToCamelCase" value="true"/>
+    </settings>
+
+	<!-- 设置别名 -->
+	<typeAliases>
+		<!-- 批量,默认别名为：类名Person或者person -->
+		<package name="com.zhou.grad.*.entity" />
+	</typeAliases>
+
+</configuration>

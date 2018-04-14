@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zhou.grad.company.dao.UserCompanyDao">
+  <resultMap id="BaseResultMap" type="com.zhou.grad.entity.UserCompany">
+    <id column="uc_id" jdbcType="INTEGER" property="ucId" />
+    <result column="user_id" jdbcType="INTEGER" property="userId" />
+    <result column="company_id" jdbcType="INTEGER" property="companyId" />
+    <result column="dep_id" jdbcType="INTEGER" property="depId" />
+    <result column="emp_no" jdbcType="VARCHAR" property="empNo" />
+    <result column="position" jdbcType="VARCHAR" property="position" />
+    <result column="job_title" jdbcType="VARCHAR" property="jobTitle" />
+    <result column="salary" jdbcType="DECIMAL" property="salary" />
+    <result column="worked_time" jdbcType="INTEGER" property="workedTime" />
+    <result column="entry_time" jdbcType="TIMESTAMP" property="entryTime" />
+    <result column="regular_time" jdbcType="TIMESTAMP" property="regularTime" />
+    <result column="edit_time" jdbcType="TIMESTAMP" property="editTime" />
+    <result column="created_time" jdbcType="TIMESTAMP" property="createdTime" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    uc_id, user_id, company_id, dep_id, emp_no, position, job_title, salary, worked_time, 
+    entry_time, regular_time, edit_time, created_time
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from grad_user_company
+    where uc_id = #{ucId,jdbcType=INTEGER}
+  </select>
+  
+  <select id="selectMaxId" resultType="java.lang.Integer">
+    select max(uc_id) from grad_user_company
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from grad_user_company
+    where uc_id = #{ucId,jdbcType=INTEGER}
+  </delete>
+  
+  <delete id="deleteBatchByUserIds" parameterType="java.lang.Integer">
+    delete from grad_user_company where user_id in
+    <foreach collection="array" item="userId" open="(" separator="," close=")">
+      #{userId}
+    </foreach>
+  </delete>
+  <insert id="insert" parameterType="com.zhou.grad.entity.UserCompany">
+    <selectKey keyProperty="ucId" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into grad_user_company (uc_id, user_id, company_id, 
+      dep_id, emp_no, position, 
+      job_title, salary, worked_time, 
+      entry_time, regular_time, edit_time, 
+      created_time)
+    values (#{ucId,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, #{companyId,jdbcType=INTEGER}, 
+      #{depId,jdbcType=INTEGER}, #{empNo,jdbcType=VARCHAR}, #{position,jdbcType=VARCHAR}, 
+      #{jobTitle,jdbcType=VARCHAR}, #{salary,jdbcType=DECIMAL}, #{workedTime,jdbcType=INTEGER}, 
+      #{entryTime,jdbcType=TIMESTAMP}, #{regularTime,jdbcType=TIMESTAMP}, #{editTime,jdbcType=TIMESTAMP}, 
+      #{createdTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.zhou.grad.entity.UserCompany">
+    <selectKey keyProperty="ucId" order="BEFORE" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into grad_user_company
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      uc_id,
+      <if test="userId != null">
+        user_id,
+      </if>
+      <if test="companyId != null">
+        company_id,
+      </if>
+      <if test="depId != null">
+        dep_id,
+      </if>
+      <if test="empNo != null">
+        emp_no,
+      </if>
+      <if test="position != null">
+        position,
+      </if>
+      <if test="jobTitle != null">
+        job_title,
+      </if>
+      <if test="salary != null">
+        salary,
+      </if>
+      <if test="workedTime != null">
+        worked_time,
+      </if>
+      <if test="entryTime != null">
+        entry_time,
+      </if>
+      <if test="regularTime != null">
+        regular_time,
+      </if>
+      <if test="editTime != null">
+        edit_time,
+      </if>
+      <if test="createdTime != null">
+        created_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      #{ucId,jdbcType=INTEGER},
+      <if test="userId != null">
+        #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="companyId != null">
+        #{companyId,jdbcType=INTEGER},
+      </if>
+      <if test="depId != null">
+        #{depId,jdbcType=INTEGER},
+      </if>
+      <if test="empNo != null">
+        #{empNo,jdbcType=VARCHAR},
+      </if>
+      <if test="position != null">
+        #{position,jdbcType=VARCHAR},
+      </if>
+      <if test="jobTitle != null">
+        #{jobTitle,jdbcType=VARCHAR},
+      </if>
+      <if test="salary != null">
+        #{salary,jdbcType=DECIMAL},
+      </if>
+      <if test="workedTime != null">
+        #{workedTime,jdbcType=INTEGER},
+      </if>
+      <if test="entryTime != null">
+        #{entryTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="regularTime != null">
+        #{regularTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="editTime != null">
+        #{editTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createdTime != null">
+        #{createdTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.zhou.grad.entity.UserCompany">
+    update grad_user_company
+    <set>
+      <if test="userId != null">
+        user_id = #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="companyId != null">
+        company_id = #{companyId,jdbcType=INTEGER},
+      </if>
+      <if test="depId != null">
+        dep_id = #{depId,jdbcType=INTEGER},
+      </if>
+      <if test="empNo != null">
+        emp_no = #{empNo,jdbcType=VARCHAR},
+      </if>
+      <if test="position != null">
+        position = #{position,jdbcType=VARCHAR},
+      </if>
+      <if test="jobTitle != null">
+        job_title = #{jobTitle,jdbcType=VARCHAR},
+      </if>
+      <if test="salary != null">
+        salary = #{salary,jdbcType=DECIMAL},
+      </if>
+      <if test="workedTime != null">
+        worked_time = #{workedTime,jdbcType=INTEGER},
+      </if>
+      <if test="entryTime != null">
+        entry_time = #{entryTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="regularTime != null">
+        regular_time = #{regularTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="editTime != null">
+        edit_time = #{editTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createdTime != null">
+        created_time = #{createdTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where uc_id = #{ucId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.zhou.grad.entity.UserCompany">
+    update grad_user_company
+    set user_id = #{userId,jdbcType=INTEGER},
+      company_id = #{companyId,jdbcType=INTEGER},
+      dep_id = #{depId,jdbcType=INTEGER},
+      emp_no = #{empNo,jdbcType=VARCHAR},
+      position = #{position,jdbcType=VARCHAR},
+      job_title = #{jobTitle,jdbcType=VARCHAR},
+      salary = #{salary,jdbcType=DECIMAL},
+      worked_time = #{workedTime,jdbcType=INTEGER},
+      entry_time = #{entryTime,jdbcType=TIMESTAMP},
+      regular_time = #{regularTime,jdbcType=TIMESTAMP},
+      edit_time = #{editTime,jdbcType=TIMESTAMP},
+      created_time = #{createdTime,jdbcType=TIMESTAMP}
+    where uc_id = #{ucId,jdbcType=INTEGER}
+  </update>
+</mapper>

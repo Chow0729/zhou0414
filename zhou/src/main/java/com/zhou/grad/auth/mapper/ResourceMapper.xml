@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zhou.grad.auth.dao.ResourceDao">
+  <resultMap id="BaseResultMap" type="com.zhou.grad.entity.Resource">
+    <id column="resource_id" jdbcType="INTEGER" property="resourceId" />
+    <result column="pid" jdbcType="INTEGER" property="pid" />
+    <result column="resource_name" jdbcType="VARCHAR" property="resourceName" />
+    <result column="resource_url" jdbcType="VARCHAR" property="resourceUrl" />
+    <result column="location" jdbcType="VARCHAR" property="location" />
+    <result column="icon" jdbcType="VARCHAR" property="icon" />
+    <result column="isenable" jdbcType="INTEGER" property="isenable" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="perms" jdbcType="VARCHAR" property="perms" />
+    <result column="style" jdbcType="VARCHAR" property="style" />
+    <result column="edit_time" jdbcType="TIMESTAMP" property="editTime" />
+    <result column="created_time" jdbcType="TIMESTAMP" property="createdTime" />
+  </resultMap>
+  <resultMap id="ResourceWithChildMap" type="com.zhou.grad.auth.model.ResourceModal">
+    <id column="resource_id" jdbcType="INTEGER" property="resourceId" />
+    <result column="pid" jdbcType="INTEGER" property="pid" />
+    <result column="resource_name" jdbcType="VARCHAR" property="resourceName" />
+    <result column="resource_url" jdbcType="VARCHAR" property="resourceUrl" />
+    <result column="location" jdbcType="VARCHAR" property="location" />
+    <result column="icon" jdbcType="VARCHAR" property="icon" />
+    <result column="isenable" jdbcType="INTEGER" property="isenable" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="perms" jdbcType="VARCHAR" property="perms" />
+    <result column="style" jdbcType="VARCHAR" property="style" />
+    <result column="edit_time" jdbcType="TIMESTAMP" property="editTime" />
+    <result column="created_time" jdbcType="TIMESTAMP" property="createdTime" />
+  </resultMap>
+  <resultMap id="ResourceTreeMap" type="com.zhou.grad.auth.model.ResourceManageModal">
+    <id column="resource_id" jdbcType="INTEGER" property="resourceId" />
+    <result column="pid" jdbcType="INTEGER" property="parentId" />
+    <result column="resource_name" jdbcType="VARCHAR" property="resourceName" />
+    <result column="resource_url" jdbcType="VARCHAR" property="resourceUrl" />
+    <result column="location" jdbcType="VARCHAR" property="location" />
+    <result column="icon" jdbcType="VARCHAR" property="icon" />
+    <result column="isenable" jdbcType="INTEGER" property="isenable" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="style" jdbcType="VARCHAR" property="style" />
+    <collection column="resource_id" javaType="java.util.List" property="children" select="getChildren"></collection>
+  </resultMap>
+  <sql id="Base_Column_List">
+    resource_id, pid, resource_name, resource_url, location, icon, isenable, remark,
+    perms, style, edit_time, created_time
+  </sql>
+  <sql id="Tree_Column_List" >
+    resource_id, pid, resource_name, resource_url, location, icon, isenable, remark, 
+    style
+  </sql>
+  <select id="getChildren" parameterType="INTEGER" resultMap="BaseResultMap">
+    select *
+    from grad_resource r where pid = #{resource_id } order by location asc
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from grad_resource
+    where resource_id = #{resourceId,jdbcType=INTEGER}
+  </select>
+  
+  <select id="selectAllResources" resultMap="BaseResultMap">
+    select * from grad_resource
+  </select>
+  <select id="selectAllResourceWithChild" resultMap="ResourceWithChildMap">
+    select * from grad_resource
+  </select>
+  <select id="selectResourceByUserId" parameterType="java.lang.Integer" resultMap="ResourceWithChildMap">
+    select * from grad_resource where resource_id in(
+    select resource_id from grad_role_resource where role_id=(
+    select role_id from grad_user_role where user_id=#{userId})) order by location asc
+  </select>
+  
+  <select id="selectResourceTree" resultMap="ResourceTreeMap">
+    select
+    <include refid="Tree_Column_List" />
+    from grad_resource order by location asc
+  </select>
+  <select id="getPid" resultType="INTEGER" parameterType = "INTEGER">
+    select
+    pid
+    from grad_resource where resource_id = #{pid }
+  </select>
+  
+  <select id="selectResourceUrlByUserId"  resultType="java.lang.String" parameterType="int">
+    SELECT  resource_url FROM grad_resource WHERE resource_id IN 
+    (SELECT resource_id FROM grad_role_resource WHERE role_id = 
+    (SELECT role_id FROM grad_user_role WHERE user_id = #{userId }))
+  </select>
+  
+  <select id="selectAllResourceUrls" resultType="String">
+    SELECT resource_url FROM grad_resource
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from grad_resource
+    where resource_id = #{resourceId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.zhou.grad.entity.Resource">
+    <selectKey keyProperty="resourceId" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into grad_resource (resource_id, pid, resource_name, 
+      resource_url, location, icon, 
+      isenable, remark, perms, 
+      style, edit_time, created_time
+      )
+    values (#{resourceId,jdbcType=INTEGER}, #{pid,jdbcType=INTEGER}, #{resourceName,jdbcType=VARCHAR}, 
+      #{resourceUrl,jdbcType=VARCHAR}, #{location,jdbcType=VARCHAR}, #{icon,jdbcType=VARCHAR}, 
+      #{isenable,jdbcType=INTEGER}, #{remark,jdbcType=VARCHAR}, #{perms,jdbcType=VARCHAR}, 
+      #{style,jdbcType=VARCHAR}, #{editTime,jdbcType=TIMESTAMP}, #{createdTime,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.zhou.grad.entity.Resource">
+    <selectKey keyProperty="resourceId" order="BEFORE" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into grad_resource
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      resource_id,
+      <if test="pid != null">
+        pid,
+      </if>
+      <if test="resourceName != null">
+        resource_name,
+      </if>
+      <if test="resourceUrl != null">
+        resource_url,
+      </if>
+      <if test="location != null">
+        location,
+      </if>
+      <if test="icon != null">
+        icon,
+      </if>
+      <if test="isenable != null">
+        isenable,
+      </if>
+      <if test="remark != null">
+        remark,
+      </if>
+      <if test="perms != null">
+        perms,
+      </if>
+      <if test="style != null">
+        style,
+      </if>
+      <if test="editTime != null">
+        edit_time,
+      </if>
+      <if test="createdTime != null">
+        created_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      #{resourceId,jdbcType=INTEGER},
+      <if test="pid != null">
+        #{pid,jdbcType=INTEGER},
+      </if>
+      <if test="resourceName != null">
+        #{resourceName,jdbcType=VARCHAR},
+      </if>
+      <if test="resourceUrl != null">
+        #{resourceUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="location != null">
+        #{location,jdbcType=VARCHAR},
+      </if>
+      <if test="icon != null">
+        #{icon,jdbcType=VARCHAR},
+      </if>
+      <if test="isenable != null">
+        #{isenable,jdbcType=INTEGER},
+      </if>
+      <if test="remark != null">
+        #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="perms != null">
+        #{perms,jdbcType=VARCHAR},
+      </if>
+      <if test="style != null">
+        #{style,jdbcType=VARCHAR},
+      </if>
+      <if test="editTime != null">
+        #{editTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createdTime != null">
+        #{createdTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.zhou.grad.entity.Resource">
+    update grad_resource
+    <set>
+      <if test="pid != null">
+        pid = #{pid,jdbcType=INTEGER},
+      </if>
+      <if test="resourceName != null">
+        resource_name = #{resourceName,jdbcType=VARCHAR},
+      </if>
+      <if test="resourceUrl != null">
+        resource_url = #{resourceUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="location != null">
+        location = #{location,jdbcType=VARCHAR},
+      </if>
+      <if test="icon != null">
+        icon = #{icon,jdbcType=VARCHAR},
+      </if>
+      <if test="isenable != null">
+        isenable = #{isenable,jdbcType=INTEGER},
+      </if>
+      <if test="remark != null">
+        remark = #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="perms != null">
+        perms = #{perms,jdbcType=VARCHAR},
+      </if>
+      <if test="style != null">
+        style = #{style,jdbcType=VARCHAR},
+      </if>
+      <if test="editTime != null">
+        edit_time = #{editTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createdTime != null">
+        created_time = #{createdTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where resource_id = #{resourceId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.zhou.grad.entity.Resource">
+    update grad_resource
+    set pid = #{pid,jdbcType=INTEGER},
+      resource_name = #{resourceName,jdbcType=VARCHAR},
+      resource_url = #{resourceUrl,jdbcType=VARCHAR},
+      location = #{location,jdbcType=VARCHAR},
+      icon = #{icon,jdbcType=VARCHAR},
+      isenable = #{isenable,jdbcType=INTEGER},
+      remark = #{remark,jdbcType=VARCHAR},
+      perms = #{perms,jdbcType=VARCHAR},
+      style = #{style,jdbcType=VARCHAR},
+      edit_time = #{editTime,jdbcType=TIMESTAMP},
+      created_time = #{createdTime,jdbcType=TIMESTAMP}
+    where resource_id = #{resourceId,jdbcType=INTEGER}
+  </update>
+</mapper>

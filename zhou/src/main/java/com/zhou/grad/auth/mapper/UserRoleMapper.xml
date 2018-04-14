@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zhou.grad.auth.dao.UserRoleDao">
+  <resultMap id="BaseResultMap" type="com.zhou.grad.entity.UserRole">
+    <id column="user_role_id" jdbcType="INTEGER" property="userRoleId" />
+    <result column="user_id" jdbcType="INTEGER" property="userId" />
+    <result column="role_id" jdbcType="INTEGER" property="roleId" />
+    <result column="created_time" jdbcType="TIMESTAMP" property="createdTime" />
+  </resultMap>
+  <resultMap id="UserRoleResultMap" type="com.zhou.grad.auth.model.UserRoleModal">
+	<id column="user_id" jdbcType="INTEGER" property="userId" />
+	<result column="real_name" jdbcType="VARCHAR" property="realName" />
+	<result column="role_id" jdbcType="VARCHAR" property="roleId" />
+	<result column="role_name" jdbcType="VARCHAR" property="roleName" />
+	<result column="dep_name" jdbcType="VARCHAR" property="deptName" />
+	<result column="position" jdbcType="VARCHAR" property="position" />
+</resultMap>
+  <sql id="Base_Column_List">
+    user_role_id, user_id, role_id, created_time
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from grad_user_role
+    where user_role_id = #{userRoleId,jdbcType=INTEGER}
+  </select>
+  <!-- user_role是user和role的联合表，uc是user_company表，d是department表 -->
+  <select id="selectUserRoleByPage" parameterType="map"
+	resultMap="UserRoleResultMap">
+	select
+	user_role.user_id,user_role.user_name,user_role.real_name,user_role.role_id,user_role.role_name,uc.position,d.dep_name
+	FROM (select u.user_id,u.user_name,u.real_name,r.role_id,r.role_name from
+	grad_user u LEFT JOIN grad_user_role ur on u.user_id=ur.user_id LEFT
+	JOIN grad_role r on ur.role_id=r.role_id) user_role LEFT JOIN
+	grad_user_company uc on user_role.user_id=uc.user_id LEFT JOIN
+	grad_department d on uc.dep_id=d.dep_id
+	<where>
+      <if test="condition != null and condition !=''">
+        IFNULL(${selectedFiled},CONCAT(IFNULL(user_role.role_name,''),IFNULL(user_role.real_name,''),IFNULL(d.dep_name,''),IFNULL(uc.position,'')))
+        LIKE CONCAT('%',#{condition},'%')
+      </if>
+      <!-- <if test="isRole==0">
+        and user_role.role_id is NULL
+      </if>
+      <if test="isRole>0">
+         and user_role.role_id>0
+      </if> -->
+     </where>
+     limit #{start},#{pageSize}
+	
+  </select>
+  <select id="countUsers" parameterType="map" resultType="java.lang.Integer">
+    select
+    count(*)
+    FROM (select u.user_id,u.user_name,u.real_name,r.role_id,r.role_name from
+    grad_user u LEFT JOIN grad_user_role ur on u.user_id=ur.user_id LEFT
+    JOIN grad_role r on ur.role_id=r.role_id) user_role LEFT JOIN
+    grad_user_company uc on user_role.user_id=uc.user_id LEFT JOIN
+    grad_department d on uc.dep_id=d.dep_id
+    <where>
+      <if test="condition != null and condition !=''">
+        IFNULL(${selectedFiled},CONCAT(IFNULL(user_role.role_name,''),IFNULL(user_role.real_name,''),IFNULL(d.dep_name,''),IFNULL(uc.position,'')))
+        LIKE CONCAT('%',#{condition},'%')
+      </if>
+      <!-- <if test="isRole==0">
+        and user_role.role_id is NULL
+      </if>
+      <if test="isRole>0">
+         and user_role.role_id>0
+      </if> -->
+     </where>
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from grad_user_role
+    where user_role_id = #{userRoleId,jdbcType=INTEGER}
+  </delete>
+  
+  <delete id="deleteByUserId" parameterType="java.lang.Integer">
+    delete from grad_user_role
+    where user_id = #{userId}
+  </delete>
+  <delete id="deleteBatchByUserIds" parameterType="java.lang.Integer">
+    delete from grad_user_role
+    where user_id in 
+    <foreach collection="array" item="userId" open="(" separator="," close=")">
+      #{userId}
+    </foreach>
+  </delete>
+  <insert id="insert" parameterType="com.zhou.grad.entity.UserRole">
+    <selectKey keyProperty="userRoleId" order="BEFORE" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into grad_user_role (user_role_id, user_id, role_id, 
+      created_time)
+    values (#{userRoleId,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, #{roleId,jdbcType=INTEGER}, 
+      #{createdTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.zhou.grad.entity.UserRole">
+    <selectKey keyProperty="userRoleId" order="BEFORE" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into grad_user_role
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      user_role_id,
+      <if test="userId != null">
+        user_id,
+      </if>
+      <if test="roleId != null">
+        role_id,
+      </if>
+      <if test="createdTime != null">
+        created_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      #{userRoleId,jdbcType=INTEGER},
+      <if test="userId != null">
+        #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="roleId != null">
+        #{roleId,jdbcType=INTEGER},
+      </if>
+      <if test="createdTime != null">
+        #{createdTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.zhou.grad.entity.UserRole">
+    update grad_user_role
+    <set>
+      <if test="userId != null">
+        user_id = #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="roleId != null">
+        role_id = #{roleId,jdbcType=INTEGER},
+      </if>
+      <if test="createdTime != null">
+        created_time = #{createdTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where user_role_id = #{userRoleId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.zhou.grad.entity.UserRole">
+    update grad_user_role
+    set user_id = #{userId,jdbcType=INTEGER},
+      role_id = #{roleId,jdbcType=INTEGER},
+      created_time = #{createdTime,jdbcType=TIMESTAMP}
+    where user_role_id = #{userRoleId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByUserId" parameterType="map">
+    update grad_user_role
+    set role_id=#{roleId} where user_id=#{userId}
+  </update>
+  <update id="updateByUserIds" parameterType="map">
+    update grad_user_role
+    set role_id=#{roleId} where user_id in 
+    <foreach collection="userIds" item="userId" open="(" separator="," close=")">
+      #{userId}
+    </foreach>
+  </update>
+</mapper>

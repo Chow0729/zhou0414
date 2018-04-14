@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zhou.grad.business.dao.RoomDao">
+  <resultMap id="BaseResultMap" type="com.zhou.grad.entity.Room">
+    <id column="room_id" jdbcType="INTEGER" property="roomId" />
+    <result column="room_name" jdbcType="VARCHAR" property="roomName" />
+    <result column="status" jdbcType="VARCHAR" property="status" />
+    <result column="room_type" jdbcType="VARCHAR" property="roomType" />
+    <result column="room_type_id" jdbcType="INTEGER" property="roomTypeId" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="created_time" jdbcType="TIMESTAMP" property="createdTime" />
+    <result column="edit_time" jdbcType="TIMESTAMP" property="editTime" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    room_id, room_name, status, room_type, room_type_id, remark, created_time, edit_time
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from grad_room
+    where room_id = #{roomId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from grad_room
+    where room_id = #{roomId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.zhou.grad.entity.Room">
+    <selectKey keyProperty="roomId" order="BEFORE" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into grad_room (room_id, room_name, status, 
+      room_type, room_type_id, remark, 
+      created_time, edit_time)
+    values (#{roomId,jdbcType=INTEGER}, #{roomName,jdbcType=VARCHAR}, #{status,jdbcType=VARCHAR}, 
+      #{roomType,jdbcType=VARCHAR}, #{roomTypeId,jdbcType=INTEGER}, #{remark,jdbcType=VARCHAR}, 
+      #{createdTime,jdbcType=TIMESTAMP}, #{editTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.zhou.grad.entity.Room">
+    <selectKey keyProperty="roomId" order="BEFORE" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into grad_room
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      room_id,
+      <if test="roomName != null">
+        room_name,
+      </if>
+      <if test="status != null">
+        status,
+      </if>
+      <if test="roomType != null">
+        room_type,
+      </if>
+      <if test="roomTypeId != null">
+        room_type_id,
+      </if>
+      <if test="remark != null">
+        remark,
+      </if>
+      <if test="createdTime != null">
+        created_time,
+      </if>
+      <if test="editTime != null">
+        edit_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      #{roomId,jdbcType=INTEGER},
+      <if test="roomName != null">
+        #{roomName,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="roomType != null">
+        #{roomType,jdbcType=VARCHAR},
+      </if>
+      <if test="roomTypeId != null">
+        #{roomTypeId,jdbcType=INTEGER},
+      </if>
+      <if test="remark != null">
+        #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="createdTime != null">
+        #{createdTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="editTime != null">
+        #{editTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  
+    <select id="selectByPage" parameterType="com.zhou.grad.auth.model.QueryParamsModal" resultMap="BaseResultMap">
+    select * from grad_room 
+    <where>
+      <if test="condition != null and condition != ''">
+        IFNULL(${selectedFiled},CONCAT(IFNULL(room_name,''),IFNULL(remark,'')))
+        LIKE CONCAT('%',#{condition},'%')
+      </if>
+      <if test="status >=0">
+        status=#{status}
+      </if>
+    </where>
+    limit #{start},#{pageSize}
+  </select>
+  <select id="countAllRoom" parameterType="com.zhou.grad.auth.model.QueryParamsModal" resultType="int">
+    select count(*) from grad_room
+    <where>
+      <if test="condition != null and condition != ''">
+        IFNULL(${selectedFiled},CONCAT(IFNULL(room_name,''),IFNULL(remark,'')))
+        LIKE CONCAT('%',#{condition},'%')
+      </if>
+      <if test="status >=0">
+        status=#{status}
+      </if>
+    </where>
+  </select>
+  
+  
+  <update id="updateByPrimaryKeySelective" parameterType="com.zhou.grad.entity.Room">
+    update grad_room
+    <set>
+      <if test="roomName != null">
+        room_name = #{roomName,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        status = #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="roomType != null">
+        room_type = #{roomType,jdbcType=VARCHAR},
+      </if>
+      <if test="roomTypeId != null">
+        room_type_id = #{roomTypeId,jdbcType=INTEGER},
+      </if>
+      <if test="remark != null">
+        remark = #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="createdTime != null">
+        created_time = #{createdTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="editTime != null">
+        edit_time = #{editTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where room_id = #{roomId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.zhou.grad.entity.Room">
+    update grad_room
+    set room_name = #{roomName,jdbcType=VARCHAR},
+      status = #{status,jdbcType=VARCHAR},
+      room_type = #{roomType,jdbcType=VARCHAR},
+      room_type_id = #{roomTypeId,jdbcType=INTEGER},
+      remark = #{remark,jdbcType=VARCHAR},
+      created_time = #{createdTime,jdbcType=TIMESTAMP},
+      edit_time = #{editTime,jdbcType=TIMESTAMP}
+    where room_id = #{roomId,jdbcType=INTEGER}
+  </update>
+</mapper>

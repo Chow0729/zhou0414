@@ -1,0 +1,302 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zhou.grad.wechat.dao.FoodDao">
+  <resultMap id="BaseResultMap" type="com.zhou.grad.entity.Food">
+    <id column="food_id" jdbcType="INTEGER" property="foodId" />
+    <result column="image_url" jdbcType="VARCHAR" property="imageUrl" />
+    <result column="original_price" jdbcType="DOUBLE" property="originalPrice" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="is_featured" jdbcType="VARCHAR" property="isFeatured" />
+    <result column="packing_fee" jdbcType="DOUBLE" property="packingFee" />
+    <result column="recent_rating" jdbcType="DOUBLE" property="recentRating" />
+    <result column="price" jdbcType="DOUBLE" property="price" />
+    <result column="sold_out" jdbcType="VARCHAR" property="soldOut" />
+    <result column="recent_popularity" jdbcType="VARCHAR" property="recentPopularity" />
+    <result column="stock" jdbcType="INTEGER" property="stock" />
+    <result column="min_purchase" jdbcType="INTEGER" property="minPurchase" />
+    <result column="month_sales" jdbcType="INTEGER" property="monthSales" />
+    <result column="ratinig_count" jdbcType="INTEGER" property="ratinigCount" />
+    <result column="tips" jdbcType="VARCHAR" property="tips" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+  </resultMap>
+  <resultMap id="FoodsByCategoryResultMap" type="com.zhou.grad.wechat.model.FoodReturnModel">
+    <result column="category_name" jdbcType="VARCHAR" property="name"/>
+    <collection column="category_id" javaType="java.util.List" property="foods" select="selectFoodsByCatgid"></collection>
+  </resultMap>
+  
+  <resultMap id="FoodDetailResultMap" type="com.zhou.grad.wechat.model.FoodDetailModel">
+    <id column="food_id" jdbcType="INTEGER" property="foodId" />
+    <result column="image_url" jdbcType="VARCHAR" property="imageUrl" />
+    <result column="original_price" jdbcType="DOUBLE" property="originalPrice" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="is_featured" jdbcType="VARCHAR" property="isFeatured" />
+    <result column="packing_fee" jdbcType="DOUBLE" property="packingFee" />
+    <result column="recent_rating" jdbcType="DOUBLE" property="recentRating" />
+    <result column="price" jdbcType="DOUBLE" property="price" />
+    <result column="sold_out" jdbcType="VARCHAR" property="soldOut" />
+    <result column="recent_popularity" jdbcType="VARCHAR" property="recentPopularity" />
+    <result column="stock" jdbcType="INTEGER" property="stock" />
+    <result column="min_purchase" jdbcType="INTEGER" property="minPurchase" />
+    <result column="month_sales" jdbcType="INTEGER" property="monthSales" />
+    <result column="ratinig_count" jdbcType="INTEGER" property="ratinigCount" />
+    <result column="tips" jdbcType="VARCHAR" property="tips" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="category_id" jdbcType="INTEGER" property="categoryId" />
+    <result column="pinyin_name" jdbcType="VARCHAR" property="pinyinName" />
+    <result column="category_name" jdbcType="VARCHAR" property="categoryName" />
+  </resultMap>
+  
+  <select id="selectFoodsByCatgid" resultType="com.zhou.grad.entity.Food">
+    select * from grad_food where food_id in (select food_id from grad_food_category where category_id=#{categoryId})
+  </select>
+  <sql id="Base_Column_List">
+    food_id, image_url, original_price, name, is_featured, packing_fee, recent_rating, 
+    price, sold_out, recent_popularity, stock, min_purchase, month_sales, ratinig_count, 
+    tips, remark
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from grad_food
+    where food_id = #{foodId,jdbcType=INTEGER}
+  </select>
+  
+  <select id="selectByFoodId" parameterType="java.lang.Integer" resultMap="FoodDetailResultMap">
+    SELECT grad_food.*, grad_category.category_id, grad_category.pinyin_name,
+    grad_category.category_name from grad_food LEFT JOIN grad_food_category
+    on grad_food.food_id=grad_food_category.food_id LEFT JOIN grad_category
+    on grad_food_category.category_id=grad_category.category_id 
+    where grad_food.food_id=#{foodId}
+  </select>
+  
+  <select id="selectFoodsOrderByCatgid" resultMap="FoodsByCategoryResultMap">
+    select * from grad_category
+  </select>
+  
+  <select id="selectFoodsByPage" parameterType="java.util.Map" resultMap="FoodDetailResultMap">
+	SELECT grad_food.*, grad_category.category_id, grad_category.pinyin_name,
+	grad_category.category_name from grad_food LEFT JOIN grad_food_category
+	on grad_food.food_id=grad_food_category.food_id LEFT JOIN grad_category
+	on grad_food_category.category_id=grad_category.category_id
+	<where>
+	  <if test="condition != null and condition !=''">
+                IFNULL(${selectedFiled},CONCAT(IFNULL(name,''),IFNULL(category_name,''),IFNULL(price,''),IFNULL(stock,''),IFNULL(grad_food.remark,'')))
+                LIKE CONCAT('%',#{condition},'%')
+            </if>
+	</where>
+	order by category_id asc limit #{start}, #{pageSize}
+  </select>
+  <select id="countByCondition"  parameterType="java.util.Map" resultType="java.lang.Integer">
+    select count(*)
+    from grad_food LEFT JOIN grad_food_category
+    on grad_food.food_id=grad_food_category.food_id LEFT JOIN grad_category
+    on grad_food_category.category_id=grad_category.category_id
+    <where>
+      <if test="condition != null and condition !=''">
+                IFNULL(${selectedFiled},CONCAT(IFNULL(name,''),IFNULL(category_name,''),IFNULL(price,''),IFNULL(stock,''),IFNULL(grad_food.remark,'')))
+                LIKE CONCAT('%',#{condition},'%')
+            </if>
+    </where>
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from grad_food
+    where food_id = #{foodId,jdbcType=INTEGER}
+  </delete>
+  
+  <delete id="deleteBatchByFooId" parameterType="java.lang.Integer">
+    delete from grad_food
+    where food_id in 
+    <foreach collection="array" item="foodId" open="(" separator="," close=")">
+      #{foodId}
+    </foreach>
+  </delete>
+  <insert id="insert" parameterType="com.zhou.grad.entity.Food">
+    <selectKey keyProperty="foodId" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into grad_food (food_id, image_url, original_price, 
+      name, is_featured, packing_fee, 
+      recent_rating, price, sold_out, 
+      recent_popularity, stock, min_purchase, 
+      month_sales, ratinig_count, tips, 
+      remark)
+    values (#{foodId,jdbcType=INTEGER}, #{imageUrl,jdbcType=VARCHAR}, #{originalPrice,jdbcType=DOUBLE}, 
+      #{name,jdbcType=VARCHAR}, #{isFeatured,jdbcType=VARCHAR}, #{packingFee,jdbcType=DOUBLE}, 
+      #{recentRating,jdbcType=DOUBLE}, #{price,jdbcType=DOUBLE}, #{soldOut,jdbcType=VARCHAR}, 
+      #{recentPopularity,jdbcType=VARCHAR}, #{stock,jdbcType=INTEGER}, #{minPurchase,jdbcType=INTEGER}, 
+      #{monthSales,jdbcType=INTEGER}, #{ratinigCount,jdbcType=INTEGER}, #{tips,jdbcType=VARCHAR}, 
+      #{remark,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.zhou.grad.entity.Food">
+    <selectKey keyProperty="foodId" order="BEFORE" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into grad_food
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      food_id,
+      <if test="imageUrl != null">
+        image_url,
+      </if>
+      <if test="originalPrice != null">
+        original_price,
+      </if>
+      <if test="name != null">
+        name,
+      </if>
+      <if test="isFeatured != null">
+        is_featured,
+      </if>
+      <if test="packingFee != null">
+        packing_fee,
+      </if>
+      <if test="recentRating != null">
+        recent_rating,
+      </if>
+      <if test="price != null">
+        price,
+      </if>
+      <if test="soldOut != null">
+        sold_out,
+      </if>
+      <if test="recentPopularity != null">
+        recent_popularity,
+      </if>
+      <if test="stock != null">
+        stock,
+      </if>
+      <if test="minPurchase != null">
+        min_purchase,
+      </if>
+      <if test="monthSales != null">
+        month_sales,
+      </if>
+      <if test="ratinigCount != null">
+        ratinig_count,
+      </if>
+      <if test="tips != null">
+        tips,
+      </if>
+      <if test="remark != null">
+        remark,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      #{foodId,jdbcType=INTEGER},
+      <if test="imageUrl != null">
+        #{imageUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="originalPrice != null">
+        #{originalPrice,jdbcType=DOUBLE},
+      </if>
+      <if test="name != null">
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="isFeatured != null">
+        #{isFeatured,jdbcType=VARCHAR},
+      </if>
+      <if test="packingFee != null">
+        #{packingFee,jdbcType=DOUBLE},
+      </if>
+      <if test="recentRating != null">
+        #{recentRating,jdbcType=DOUBLE},
+      </if>
+      <if test="price != null">
+        #{price,jdbcType=DOUBLE},
+      </if>
+      <if test="soldOut != null">
+        #{soldOut,jdbcType=VARCHAR},
+      </if>
+      <if test="recentPopularity != null">
+        #{recentPopularity,jdbcType=VARCHAR},
+      </if>
+      <if test="stock != null">
+        #{stock,jdbcType=INTEGER},
+      </if>
+      <if test="minPurchase != null">
+        #{minPurchase,jdbcType=INTEGER},
+      </if>
+      <if test="monthSales != null">
+        #{monthSales,jdbcType=INTEGER},
+      </if>
+      <if test="ratinigCount != null">
+        #{ratinigCount,jdbcType=INTEGER},
+      </if>
+      <if test="tips != null">
+        #{tips,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null">
+        #{remark,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.zhou.grad.entity.Food">
+    update grad_food
+    <set>
+      <if test="imageUrl != null">
+        image_url = #{imageUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="originalPrice != null">
+        original_price = #{originalPrice,jdbcType=DOUBLE},
+      </if>
+      <if test="name != null">
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="isFeatured != null">
+        is_featured = #{isFeatured,jdbcType=VARCHAR},
+      </if>
+      <if test="packingFee != null">
+        packing_fee = #{packingFee,jdbcType=DOUBLE},
+      </if>
+      <if test="recentRating != null">
+        recent_rating = #{recentRating,jdbcType=DOUBLE},
+      </if>
+      <if test="price != null">
+        price = #{price,jdbcType=DOUBLE},
+      </if>
+      <if test="soldOut != null">
+        sold_out = #{soldOut,jdbcType=VARCHAR},
+      </if>
+      <if test="recentPopularity != null">
+        recent_popularity = #{recentPopularity,jdbcType=VARCHAR},
+      </if>
+      <if test="stock != null">
+        stock = #{stock,jdbcType=INTEGER},
+      </if>
+      <if test="minPurchase != null">
+        min_purchase = #{minPurchase,jdbcType=INTEGER},
+      </if>
+      <if test="monthSales != null">
+        month_sales = #{monthSales,jdbcType=INTEGER},
+      </if>
+      <if test="ratinigCount != null">
+        ratinig_count = #{ratinigCount,jdbcType=INTEGER},
+      </if>
+      <if test="tips != null">
+        tips = #{tips,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null">
+        remark = #{remark,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where food_id = #{foodId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.zhou.grad.entity.Food">
+    update grad_food
+    set image_url = #{imageUrl,jdbcType=VARCHAR},
+      original_price = #{originalPrice,jdbcType=DOUBLE},
+      name = #{name,jdbcType=VARCHAR},
+      is_featured = #{isFeatured,jdbcType=VARCHAR},
+      packing_fee = #{packingFee,jdbcType=DOUBLE},
+      recent_rating = #{recentRating,jdbcType=DOUBLE},
+      price = #{price,jdbcType=DOUBLE},
+      sold_out = #{soldOut,jdbcType=VARCHAR},
+      recent_popularity = #{recentPopularity,jdbcType=VARCHAR},
+      stock = #{stock,jdbcType=INTEGER},
+      min_purchase = #{minPurchase,jdbcType=INTEGER},
+      month_sales = #{monthSales,jdbcType=INTEGER},
+      ratinig_count = #{ratinigCount,jdbcType=INTEGER},
+      tips = #{tips,jdbcType=VARCHAR},
+      remark = #{remark,jdbcType=VARCHAR}
+    where food_id = #{foodId,jdbcType=INTEGER}
+  </update>
+</mapper>

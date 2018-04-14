@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zhou.grad.wechat.dao.OrderFoodDao">
+  <resultMap id="BaseResultMap" type="com.zhou.grad.entity.OrderFood">
+    <id column="order_food_id" jdbcType="INTEGER" property="orderFoodId" />
+    <result column="order_id" jdbcType="BIGINT" property="orderId" />
+    <result column="order_code" jdbcType="VARCHAR" property="orderCode" />
+    <result column="food_id" jdbcType="INTEGER" property="foodId" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="price" jdbcType="DOUBLE" property="price" />
+    <result column="detail" jdbcType="VARCHAR" property="detail" />
+    <result column="number" jdbcType="INTEGER" property="number" />
+    <result column="sum" jdbcType="DOUBLE" property="sum" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    order_food_id, order_id, order_code, food_id, name, price, detail, number, sum
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from grad_order_food
+    where order_food_id = #{orderFoodId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from grad_order_food
+    where order_food_id = #{orderFoodId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.zhou.grad.entity.OrderFood">
+    <selectKey keyProperty="orderFoodId" order="BEFORE" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into grad_order_food (order_food_id, order_id, order_code, 
+      food_id, name, price, 
+      detail, number, sum)
+    values (#{orderFoodId,jdbcType=INTEGER}, #{orderId,jdbcType=BIGINT}, #{orderCode,jdbcType=VARCHAR}, 
+      #{foodId,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{price,jdbcType=DOUBLE}, 
+      #{detail,jdbcType=VARCHAR}, #{number,jdbcType=INTEGER}, #{sum,jdbcType=DOUBLE})
+  </insert>
+  <insert id="insertBatch" parameterType="com.zhou.grad.entity.OrderFood">
+    insert into grad_order_food (order_id, order_code, name, price, 
+      detail, number, sum) values
+      <foreach collection="list" item="item" separator=",">  
+           ( #{item.orderId},  #{item.orderCode}, #{item.name}, #{item.price},
+            #{item.detail}, #{item.number}, #{item.sum})
+        </foreach>
+  </insert>
+  <insert id="insertSelective" parameterType="com.zhou.grad.entity.OrderFood">
+    <selectKey keyProperty="orderFoodId" order="BEFORE" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into grad_order_food
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      order_food_id,
+      <if test="orderId != null">
+        order_id,
+      </if>
+      <if test="orderCode != null">
+        order_code,
+      </if>
+      <if test="foodId != null">
+        food_id,
+      </if>
+      <if test="name != null">
+        name,
+      </if>
+      <if test="price != null">
+        price,
+      </if>
+      <if test="detail != null">
+        detail,
+      </if>
+      <if test="number != null">
+        number,
+      </if>
+      <if test="sum != null">
+        sum,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      #{orderFoodId,jdbcType=INTEGER},
+      <if test="orderId != null">
+        #{orderId,jdbcType=BIGINT},
+      </if>
+      <if test="orderCode != null">
+        #{orderCode,jdbcType=VARCHAR},
+      </if>
+      <if test="foodId != null">
+        #{foodId,jdbcType=INTEGER},
+      </if>
+      <if test="name != null">
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="price != null">
+        #{price,jdbcType=DOUBLE},
+      </if>
+      <if test="detail != null">
+        #{detail,jdbcType=VARCHAR},
+      </if>
+      <if test="number != null">
+        #{number,jdbcType=INTEGER},
+      </if>
+      <if test="sum != null">
+        #{sum,jdbcType=DOUBLE},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.zhou.grad.entity.OrderFood">
+    update grad_order_food
+    <set>
+      <if test="orderId != null">
+        order_id = #{orderId,jdbcType=BIGINT},
+      </if>
+      <if test="orderCode != null">
+        order_code = #{orderCode,jdbcType=VARCHAR},
+      </if>
+      <if test="foodId != null">
+        food_id = #{foodId,jdbcType=INTEGER},
+      </if>
+      <if test="name != null">
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="price != null">
+        price = #{price,jdbcType=DOUBLE},
+      </if>
+      <if test="detail != null">
+        detail = #{detail,jdbcType=VARCHAR},
+      </if>
+      <if test="number != null">
+        number = #{number,jdbcType=INTEGER},
+      </if>
+      <if test="sum != null">
+        sum = #{sum,jdbcType=DOUBLE},
+      </if>
+    </set>
+    where order_food_id = #{orderFoodId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.zhou.grad.entity.OrderFood">
+    update grad_order_food
+    set order_id = #{orderId,jdbcType=BIGINT},
+      order_code = #{orderCode,jdbcType=VARCHAR},
+      food_id = #{foodId,jdbcType=INTEGER},
+      name = #{name,jdbcType=VARCHAR},
+      price = #{price,jdbcType=DOUBLE},
+      detail = #{detail,jdbcType=VARCHAR},
+      number = #{number,jdbcType=INTEGER},
+      sum = #{sum,jdbcType=DOUBLE}
+    where order_food_id = #{orderFoodId,jdbcType=INTEGER}
+  </update>
+</mapper>

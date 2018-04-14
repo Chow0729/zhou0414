@@ -1,0 +1,330 @@
+body{
+	background-image : url("../img/SwanGarden.jpg");
+}
+header {
+	/* height: 60px; */
+/* 	background: #fff;
+	border-bottom: 1px solid #f0f0f0; */
+	/* top: 0;	    
+    right: 0;
+    left: 0;
+    z-index: 1030;
+    position: fixed;
+    border-width: 0 0 1px;
+    border-bottom: 1px solid #d6dfea;
+    background: #eff4fa; */
+}
+
+.header_logo{
+	float: left;
+    _display: inline;
+    width: 182px;
+    height: 35px;
+    margin-top: 14px;
+    margin-left: 40px;
+    text-indent: -9999em;
+    background-size: 182px 35px;
+    background-repeat: no-repeat;
+    background-position: left center;
+    /* background-image : url("../img/logo.png"); */
+}
+
+.header_link {
+	overflow: hidden;
+    margin-top: 16px;
+    padding-right: 40px;
+    line-height: 30px;
+    text-align: right;
+    color: #b6b6b6;
+}
+
+.container {
+	margin-top:60px;
+	padding: 65px 15px;
+}
+
+.rp {
+	margin-top:60px;
+	padding:0 15px;
+}
+
+.rp_form{
+	width: 262px; 
+	margin: 50px auto; 
+	display: block
+}
+
+.btn-default{
+	color: #0F97FF;
+    background-color: #fff;
+    border-color: #0F97FF;
+}
+
+.btn-default:active, .btn-default:hover, .btn-default:focus{
+	background: #0F97FF;
+    color: #fff;
+    border-color: #0F97FF;
+}
+/* hr.footer-fixed, footer{
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	height: 60px;
+} */
+
+footer{
+	color: #707070;
+    font-size: 12px;
+    line-height: 1.66666666666667;
+    text-align: center;
+}
+
+.brand-holder p{
+	font-size: 16px;
+    color: #888;
+}
+
+.nav {
+	height: auto;
+	box-shadow: 0 0 0 1px #ddd;
+	border-top-right-radius: 4px;
+	border-top-left-radius: 4px;
+}
+
+.nav>li {
+	border-left: 1px solid #ddd;
+	width: 50%;
+	color: #fafafa;
+}
+
+.nav>li:first-of-type {
+	border-left: none;
+	border-top-left-radius: 4px;
+}
+
+.nav>li>a {
+	text-align: center;
+	width: 100%;
+	font-size: 18px;
+	margin-right: 0;
+	color: #707070;
+}
+
+.nav-tabs>li>a {
+	border-radius: unset;
+}
+
+.nav>li.active {
+	border-bottom: 1px solid #ddd;
+}
+
+.nav>li.active>a {
+	border: none;
+	border-bottom: 2px solid #1f78d1;
+	margin-right: 0;
+	color: #555;
+	font-weight: 600;
+}
+
+.nav-tabs>li.active>a, .nav-tabs>li.active>a:focus, .nav-tabs>li.active>a:hover
+	{
+	border-bottom: 2px solid #1f78d1;
+}
+
+.tab-content {
+	overflow: visible;
+}
+
+.tab-pane {
+	box-shadow: 0 0 0 1px #e5e5e5;
+	border-bottom-right-radius: 2px;
+	border-bottom-left-radius: 2px;
+	padding: 15px;
+}
+
+input[type="submit"] {
+	width: 100%;
+}
+
+.register_form .form-group>label>span {
+	color: red;
+}
+
+.myIcon {
+	display: inline-block;
+	top: 33px;
+	left: 6px;
+	position: relative;
+	color: #ccc;
+	z-index: 100;
+}
+
+#emailValidate > i.form-control-feedback{
+	right:130px;
+}
+
+.login_form input[type="text"], .login_form input[type="password"],
+	.register_form input[type="email"], .register_form input[type="text"],
+	.register_form input[type="password"] {
+	padding-left: 26px;
+}
+
+label.forInput {
+	position: relative;
+	left: -17px;
+}
+
+.nav-tabs li.bv-tab-error>a {
+	color: #707070;
+}
+
+.section-subnav {
+    height: 80px;
+    background-color: #f5f5f5;
+}
+
+.section {
+    margin-top:50px;
+    width: 100%;
+}
+
+.section> div {
+    width: 1000px;
+    margin: 0 auto;
+}
+
+.section_subnav .subnav_process {
+    padding-top: 14px;
+    text-align: center;
+}
+
+i {
+    font-style: normal;
+    display: inline-block;
+    text-align: center;
+    vertical-align: middle;
+    background-repeat: no-repeat;
+}
+
+.section_subnav .subnav_process>li {
+    position: relative;
+    display: inline-block;
+}
+
+.section_subnav .subnav_process>li>div {
+    text-align: center;
+    position: relative;
+    float: left;
+    min-width: 56px;
+    height: 34px;
+    line-height: 30px;
+    vertical-align: middle;
+}
+
+.section_subnav .subnav_process>li>div>i {
+    width: 28px;
+    height: 28px;
+    font-size: 14px;
+    line-height: 28px;
+    color: #fff;
+    background-image: url(../img/common.png);
+    background-position: 0 -442px;
+    background-repeat: no-repeat;
+    background-color: none;
+}
+
+.section_subnav .subnav_process>li>div>p {
+    position: relative;
+    top: 12px;
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 20px;
+    margin-top: -8px;
+    color: #a5a5a5;
+}
+
+.section_subnav .subnav_process>li>i {
+    float: left;
+    width: 220px;
+    height: 2px;
+    margin-top: 14px;
+    vertical-align: middle;
+    background-color: #ededed;
+}
+
+.section_subnav .subnav_process .active>div>i {
+    background-image: url(../img/common.png);
+    background-position: 0 -404px;
+    background-repeat: no-repeat;
+    background-color: none;
+}
+
+.section_subnav .subnav_process .active>i {
+    background-image: url(../img/common.png);
+    background-position: 0 -392px;
+    background-repeat: no-repeat;
+    background-color: none;
+}
+
+.section_subnav .subnav_process .passed>div>i {
+    background-image: url(../img/common.png);
+    background-position: 0 -404px;
+    background-repeat: no-repeat;
+    background-color: none;
+}
+.section_subnav .subnav_process .passed>i {
+    background-color: #2f86f6;
+}
+
+.section_subnav .subnav_process .last>i {
+    display: none;
+}
+
+.val-ok {
+    background: #FBFBFD;
+    padding: 50px 0 200px;
+}
+
+.val-ok-tips {
+    text-align: center;
+    font-size: 20px;
+    color: #383838;
+    margin-bottom: 40px;
+    font-weight: lighter;
+}
+
+.val-ok-tips2 {
+    margin: -30px 0 30px;
+    text-align: center;
+    color: #999999;
+}
+
+.val-ok i {
+    width: 72px;
+    height: 72px;
+    display: block;
+    margin: 0 auto 20px;
+    background: url(../img/ok.jpg) 0 0 no-repeat;
+}
+
+.val-ok-btn {
+	text-align:center;
+}
+
+.val-ok-btn .btn-success {
+    color: #fff;
+    background-color: #0F97FF;
+    border-color: #0F97FF;
+}
+
+div.val-ok-btn>.btn-success{
+    color: #fff;
+    background-color: #0F97FF;
+    border-color: #0F97FF;
+}
+div.val-ok-btn>.btn-success:active.focus, div.val-ok-btn>.btn-success:active:focus, div.val-ok-btn>.btn-success:active:hover, div.val-ok-btn>.btn-success:active, div.val-ok-btn>.btn-success:hover, div.val-ok-btn>.btn-success:focus{
+	color: #fff;
+    background-color: #08c;
+    border-color: #08c;
+}

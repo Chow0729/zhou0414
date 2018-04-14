@@ -1,0 +1,320 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zhou.grad.auth.dao.UserDao">
+  <resultMap id="BaseResultMap" type="com.zhou.grad.entity.User">
+    <id column="user_id" jdbcType="INTEGER" property="userId" />
+    <result column="user_name" jdbcType="VARCHAR" property="userName" />
+    <result column="real_name" jdbcType="VARCHAR" property="realName" />
+    <result column="password" jdbcType="VARCHAR" property="password" />
+    <result column="sex" jdbcType="VARCHAR" property="sex" />
+    <result column="marriage" jdbcType="VARCHAR" property="marriage" />
+    <result column="native_place" jdbcType="VARCHAR" property="nativePlace" />
+    <result column="living_place" jdbcType="VARCHAR" property="livingPlace" />
+    <result column="phone" jdbcType="VARCHAR" property="phone" />
+    <result column="mail" jdbcType="VARCHAR" property="mail" />
+    <result column="birth_day" jdbcType="DATE" property="birthDay" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="isenable" jdbcType="VARCHAR" property="isenable" />
+    <result column="pic_url" jdbcType="VARCHAR" property="picUrl" />
+    <result column="edit_time" jdbcType="TIMESTAMP" property="editTime" />
+    <result column="created_time" jdbcType="TIMESTAMP" property="createdTime" />
+  </resultMap>
+  <resultMap id="userInfoMap" type="com.zhou.grad.auth.model.UserInfoModel">
+    <id column="user_id" jdbcType="BIGINT" property="userId" />
+    <result column="user_name" jdbcType="VARCHAR" property="userName" />
+    <result column="password" jdbcType="VARCHAR" property="password" />
+    <result column="real_name" jdbcType="VARCHAR" property="realName" />
+    <result column="sex" jdbcType="VARCHAR" property="sex" />
+    <result column="phone" jdbcType="VARCHAR" property="phone" />
+    <result column="mail" jdbcType="VARCHAR" property="mail" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="isenable" jdbcType="VARCHAR" property="isenable" />
+    <result column="edit_time" jdbcType="TIMESTAMP" property="editTime" />
+    <result column="created_time" jdbcType="TIMESTAMP" property="createdTime" />
+    <result column="dep_name" jdbcType="VARCHAR" property="depName" />
+    <result column="position" jdbcType="VARCHAR" property="position" />
+</resultMap>
+  <sql id="Base_Column_List">
+    user_id, user_name, real_name, password, sex, marriage, native_place, living_place, 
+    phone, mail, birth_day, remark, isenable, pic_url, edit_time, created_time
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from grad_user
+    where user_id = #{userId,jdbcType=INTEGER}
+  </select>
+  
+  <select id="selectAllUsersByPage" parameterType="map"
+    resultMap="userInfoMap">
+    select gu.user_id,gu.user_name,gu.`password`,gu.real_name,
+    gu.sex,gu.phone,gu.mail,
+    gd.dep_name,gu.created_time,gu.isenable,gu.edit_time,guc.position,
+    gu.remark from grad_user gu LEFT JOIN
+    grad_user_company guc on
+    gu.user_id
+    =guc.user_id
+    left join grad_department gd
+    on
+    guc.dep_id=gd.dep_id
+    <where>
+        <if test="condition != null and condition !=''">
+            IFNULL(${selectedFiled},CONCAT(IFNULL(user_name,''),IFNULL(real_name,''),IFNULL(gu.phone,''),IFNULL(dep_name,''),IFNULL(position,'')))
+            LIKE CONCAT('%',#{condition},'%')
+        </if>
+        <if test="isenable!=null">
+            and gu.isenable=#{isenable}
+        </if>
+    </where>
+    <if test="sortOrder !=null ">
+        order by gu.user_id ${sortOrder}
+    </if>
+    limit #{start},#{pageSize}
+  </select>
+  <select id="countAllUsers" resultType="int" parameterType="map">
+    select count(*) from(select
+    gu.user_id,gu.user_name,gu.`password`,gu.real_name,
+    gu.sex,gu.phone,gu.mail,
+    gd.dep_name,gu.created_time,gu.isenable,gu.edit_time,guc.position,
+    gu.remark from grad_user gu LEFT JOIN
+    grad_user_company guc on
+    gu.user_id
+    =guc.user_id
+    left join grad_department gd
+    on guc.dep_id=gd.dep_id ) detail
+    <where>
+        <if test="condition != null and condition !=''">
+            IFNULL(${selectedFiled},CONCAT(IFNULL(user_name,''),IFNULL(real_name,''),IFNULL(phone,''),IFNULL(dep_name,''),IFNULL(position,'')))
+            LIKE CONCAT('%',#{condition},'%')
+        </if>
+        <if test="isenable!=null">
+            and isenable=#{isenable}
+        </if>
+    </where>
+  </select>
+  
+  <select id="selectByUserName" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select * from grad_user where user_name=#{userName}
+  </select>
+  
+  <select id="selectByMail" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select * from grad_user where mail=#{mail}
+  </select>
+  
+  <select id="selectUserWithDeptByUserId" parameterType="int" resultType="map">
+	select * from grad_user left join grad_user_company on
+	grad_user.user_id=grad_user_company.user_id where
+	grad_user.user_id=#{userId}
+  </select>
+  
+  <select id="selectUserByCondition" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select * from grad_user where user_name = #{condition } or mail = #{condition }
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from grad_user
+    where user_id = #{userId,jdbcType=INTEGER}
+  </delete>
+  
+  <delete id="deleteBatch" parameterType="java.lang.Integer">
+    delete from grad_user
+    where user_id in 
+    <foreach collection="array" item="id" open="(" separator="," close=")">
+      #{id}
+    </foreach>
+  </delete>
+  <insert id="insert" parameterType="com.zhou.grad.entity.User">
+    <selectKey keyProperty="userId" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into grad_user (user_id, user_name, real_name, 
+      password, sex, marriage, 
+      native_place, living_place, phone, 
+      mail, birth_day, remark, 
+      isenable, pic_url, edit_time, 
+      created_time)
+    values (#{userId,jdbcType=INTEGER}, #{userName,jdbcType=VARCHAR}, #{realName,jdbcType=VARCHAR}, 
+      #{password,jdbcType=VARCHAR}, #{sex,jdbcType=VARCHAR}, #{marriage,jdbcType=VARCHAR}, 
+      #{nativePlace,jdbcType=VARCHAR}, #{livingPlace,jdbcType=VARCHAR}, #{phone,jdbcType=VARCHAR}, 
+      #{mail,jdbcType=VARCHAR}, #{birthDay,jdbcType=DATE}, #{remark,jdbcType=VARCHAR}, 
+      #{isenable,jdbcType=VARCHAR}, #{picUrl,jdbcType=VARCHAR}, #{editTime,jdbcType=TIMESTAMP}, 
+      #{createdTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.zhou.grad.entity.User">
+    <selectKey keyProperty="userId" order="BEFORE" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into grad_user
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      user_id,
+      <if test="userName != null">
+        user_name,
+      </if>
+      <if test="realName != null">
+        real_name,
+      </if>
+      <if test="password != null">
+        password,
+      </if>
+      <if test="sex != null">
+        sex,
+      </if>
+      <if test="marriage != null">
+        marriage,
+      </if>
+      <if test="nativePlace != null">
+        native_place,
+      </if>
+      <if test="livingPlace != null">
+        living_place,
+      </if>
+      <if test="phone != null">
+        phone,
+      </if>
+      <if test="mail != null">
+        mail,
+      </if>
+      <if test="birthDay != null">
+        birth_day,
+      </if>
+      <if test="remark != null">
+        remark,
+      </if>
+      <if test="isenable != null">
+        isenable,
+      </if>
+      <if test="picUrl != null">
+        pic_url,
+      </if>
+      <if test="editTime != null">
+        edit_time,
+      </if>
+      <if test="createdTime != null">
+        created_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      #{userId,jdbcType=INTEGER},
+      <if test="userName != null">
+        #{userName,jdbcType=VARCHAR},
+      </if>
+      <if test="realName != null">
+        #{realName,jdbcType=VARCHAR},
+      </if>
+      <if test="password != null">
+        #{password,jdbcType=VARCHAR},
+      </if>
+      <if test="sex != null">
+        #{sex,jdbcType=VARCHAR},
+      </if>
+      <if test="marriage != null">
+        #{marriage,jdbcType=VARCHAR},
+      </if>
+      <if test="nativePlace != null">
+        #{nativePlace,jdbcType=VARCHAR},
+      </if>
+      <if test="livingPlace != null">
+        #{livingPlace,jdbcType=VARCHAR},
+      </if>
+      <if test="phone != null">
+        #{phone,jdbcType=VARCHAR},
+      </if>
+      <if test="mail != null">
+        #{mail,jdbcType=VARCHAR},
+      </if>
+      <if test="birthDay != null">
+        #{birthDay,jdbcType=DATE},
+      </if>
+      <if test="remark != null">
+        #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="isenable != null">
+        #{isenable,jdbcType=VARCHAR},
+      </if>
+      <if test="picUrl != null">
+        #{picUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="editTime != null">
+        #{editTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createdTime != null">
+        #{createdTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.zhou.grad.entity.User">
+    update grad_user
+    <set>
+      <if test="userName != null">
+        user_name = #{userName,jdbcType=VARCHAR},
+      </if>
+      <if test="realName != null">
+        real_name = #{realName,jdbcType=VARCHAR},
+      </if>
+      <if test="password != null">
+        password = #{password,jdbcType=VARCHAR},
+      </if>
+      <if test="sex != null">
+        sex = #{sex,jdbcType=VARCHAR},
+      </if>
+      <if test="marriage != null">
+        marriage = #{marriage,jdbcType=VARCHAR},
+      </if>
+      <if test="nativePlace != null">
+        native_place = #{nativePlace,jdbcType=VARCHAR},
+      </if>
+      <if test="livingPlace != null">
+        living_place = #{livingPlace,jdbcType=VARCHAR},
+      </if>
+      <if test="phone != null">
+        phone = #{phone,jdbcType=VARCHAR},
+      </if>
+      <if test="mail != null">
+        mail = #{mail,jdbcType=VARCHAR},
+      </if>
+      <if test="birthDay != null">
+        birth_day = #{birthDay,jdbcType=DATE},
+      </if>
+      <if test="remark != null">
+        remark = #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="isenable != null">
+        isenable = #{isenable,jdbcType=VARCHAR},
+      </if>
+      <if test="picUrl != null">
+        pic_url = #{picUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="editTime != null">
+        edit_time = #{editTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createdTime != null">
+        created_time = #{createdTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where user_id = #{userId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.zhou.grad.entity.User">
+    update grad_user
+    set user_name = #{userName,jdbcType=VARCHAR},
+      real_name = #{realName,jdbcType=VARCHAR},
+      password = #{password,jdbcType=VARCHAR},
+      sex = #{sex,jdbcType=VARCHAR},
+      marriage = #{marriage,jdbcType=VARCHAR},
+      native_place = #{nativePlace,jdbcType=VARCHAR},
+      living_place = #{livingPlace,jdbcType=VARCHAR},
+      phone = #{phone,jdbcType=VARCHAR},
+      mail = #{mail,jdbcType=VARCHAR},
+      birth_day = #{birthDay,jdbcType=DATE},
+      remark = #{remark,jdbcType=VARCHAR},
+      isenable = #{isenable,jdbcType=VARCHAR},
+      pic_url = #{picUrl,jdbcType=VARCHAR},
+      edit_time = #{editTime,jdbcType=TIMESTAMP},
+      created_time = #{createdTime,jdbcType=TIMESTAMP}
+    where user_id = #{userId,jdbcType=INTEGER}
+  </update>
+  <update id="updateUserStatus" parameterType="java.util.Map">
+    update grad_user set isenable=#{status} where user_id in
+    <foreach collection="ids" item="id" open="(" separator="," close=")">
+      #{id}
+    </foreach>
+  </update>
+</mapper>
