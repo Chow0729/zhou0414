@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zhou.grad.business.dao.CustomerRoomDao">
+	<insert id="saveRoomCutomer" parameterType="com.zhou.grad.entity.CustomerRoom">
+	    insert into grad_customer_room ( customer_id, room_id)
+	    values ( #{customerId,jdbcType=INTEGER}, #{roomId,jdbcType=INTEGER})
+	</insert>
+	
+	<delete id="deleteCustomerRoom">
+		delete from grad_customer_room
+		where room_id = #{roomId}
+	</delete>
+</mapper>
